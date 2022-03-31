@@ -1,20 +1,26 @@
 # project_jointattention
-* author: Chan young ko
+* author: Chanyoung ko
 * date: 2022-03-31
 ---
 ## Objective
-Create the model which differentiate between ASD(Autism Spectrum Disorder) and TD(Typical development)
+Create a classification model for ASD(Autism Spectrum Disorder) and TD(Typical development)
 
 ## Project structure
-
-## Data 
+code
+data
+    assembly
+    processed 
+    raw
+    dataset_subjects.csv
+    dataset_videos.csv
+## Data
 ### [`data/dataset_videos.csv`](data/dataset_videos.csv)
 * file_name
 * task
     1. IJA
-    2. 
-    3. 
-    4.
-    5.
-    6.
+    2. RJA_low
+    3. RJA_high_BL
+    4. RJA_high_BR
+    5. RJA_high_Lt
+    6. RJA_high_Rt
 * label: 0 - TD, 1 - ASD

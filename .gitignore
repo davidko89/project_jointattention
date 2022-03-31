@@ -4,3 +4,5 @@ env
 *.MP4
 *.txt
 *.jpg
+*.csv
+**/.ipynb_checkpoints

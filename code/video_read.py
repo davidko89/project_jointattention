@@ -1,11 +1,11 @@
-import cv2
 from pathlib import Path
 import numpy as np
 import pandas as pd
+import cv2
 
 PROJECT_PATH = Path(__file__).parents[1]
 
-task_folder = {'1':'IJA', '2':'RJA_high_BL'}
+task_folder = {'1':'IJA', '2':'RJA_low', '3': 'RJA_high_BL', '4': 'RJA_high_BR', '5': 'RJA_high_Lt', '6': 'RJA_high_Rt'}
 
 def read_dataset(file_name:str)->pd.DataFrame:
     full_path = Path(PROJECT_PATH, 'data', file_name)
@@ -30,7 +30,7 @@ def read_video(video_path:Path)->np.ndarray:
         fc += 1
 
     cap.release()
-    return buf.transpose(0, 3, 1, 2) # (Frame, Channel, H, W)
+    return buf.transpose(0, 3, 1, 2) # (, Channel, H, W)
 
 def save_numpy_arr(arr:np.ndarray):
     pass
