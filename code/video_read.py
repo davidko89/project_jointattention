@@ -11,7 +11,7 @@ def read_dataset(file_name:str)->pd.DataFrame:
     full_path = Path(PROJECT_PATH, 'data', file_name)
     return pd.read_csv(full_path)[["file_name", "task", "label"]]
 
-def get_video_path(file_name, task)-> Path:
+def get_video_path(file_name, task)->Path:
     return Path(PROJECT_PATH, 'data/assembly', task_folder[str(task)],file_name)
 
 def read_video(video_path:Path)->np.ndarray:
@@ -30,7 +30,7 @@ def read_video(video_path:Path)->np.ndarray:
         fc += 1
 
     cap.release()
-    return buf.transpose(0, 3, 1, 2) # (, Channel, H, W)
+    return buf.transpose(0, 3, 1, 2) # (N, C, H, W)
 
 def save_numpy_arr(arr:np.ndarray):
     pass
