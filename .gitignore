@@ -6,3 +6,4 @@ env
 *.jpg
 *.csv
 **/.ipynb_checkpoints
+data/
