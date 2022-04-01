@@ -2,8 +2,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import cv2
-from numpy import asarray
-from numpy import save
+from tqdm import tqdm
 
 PROJECT_PATH = Path(__file__).parents[1]
 
@@ -34,24 +33,17 @@ def read_video(video_path:Path)->np.ndarray:
     cap.release()
     return buf.transpose(0, 3, 1, 2) # (N, C, H, W)
 
-def save_numpy_arr(arr:np.ndarray):
-    video_arr_npy = asarray([])
-    save('data.npy', video_arr_npy)
+def save_numpy_arr(arr:np.ndarray, file_name:str):
+    np.save(Path(PROJECT_PATH, 'data/processed', file_name), arr)
 
 def main():
     data:pd.DataFrame = read_dataset("dataset_videos.csv")
-
-    # target_data:pd.Series = data.iloc[0]
-    for target_data in range(0, len(data)):
-        
+    # i = 0
+    for i in tqdm(range(len(data))):
+        target_data = data.iloc[i]
         target_path = get_video_path(target_data['file_name'], target_data['task'])
-
         video_arr = read_video(target_path)
-        
-        video_arr_npy = save_numpy_arr(video_arr)
-
-        print(video_arr_npy.shape)
-        print(video_arr_npy[0])
+        save_numpy_arr(video_arr, f"data_{i}.npy")
 
 if __name__ =='__main__':
     main()
