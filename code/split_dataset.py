@@ -33,10 +33,16 @@ x_train, x_valid, y_train, y_valid = train_test_split(id, label, test_size=0.2, 
 print(x_train)
 print(x_valid)
 
+#%%
+x_train_list = x_train.to_list()
+dataset['train'] = False
+dataset['train'] = dataset['id'].apply(lambda x:x in x_train_list)
 
+dataset.to_csv(Path(PROJECT_PATH, 'data', "ija_label_train.csv"), index = False)
 # X = result.loc[result.label == 1.0, 'id'].to_numpy()
 # print(np.arange(len(X)))
 # print(np.random.shuffle(np.arange(len(ex))))
 # int(10 * 0.8)
 # arr[:8]
 # arr[8:]
+# %%
