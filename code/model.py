@@ -1,17 +1,59 @@
-#%%
+''' CNN_LSTM binary classification (TD vs ASD) '''
+
+import torch
 import torch.nn as nn
+import numpy as np
 import torchvision.models as models
 
-class CNN(nn.Module):
-    def __init__(self, train_CNN=False, num_classes=1):
-        super(CNN, self).__init__()
-        self.train_CNN = train_CNN
-        self.vgg16 = models.vgg16(pretrained=True, aux_logits=False)
-        self.vgg16.fc = nn.Linear(self.inception.fc.in_features, num_classes)
-        self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(0.5)
-        self.softmax = nn.Softmax()
+class VideoRNN(nn.Module):
+    def __init__(self, batch_size, device):
+        super(VideoRNN, self).__init__()
 
-    def forward(self, images):
-        features = self.vgg16(images)
-        return self.softmax(self.dropout(self.relu(features))).squeeze(1)
+        self.batch = batch_size
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # Loading vgg16
+        vgg = models.vgg16(pretrained=True)
+        
+        # Remove last layer of vgg16
+        embed = nn.Sequential(*list(vgg.classifier.children())[:-1])
+        vgg.classifier = embed
+
+        # Freezing the model last 3 layers
+        for param in vgg.parameters():
+            param.requires_grad = False
+
+        self.embedding = vgg
+        self.gru = nn.LSTM(4096, 2048, bidirectional = True)
+
+        # Classification layer (*2 because it is bidirectional)
+        self.classifier = nn.Sequential(
+            nn.Linear(2048 * 2 , 256),
+            nn.ReLU(),
+            nn.Linear(256, 2),
+        )
+
+def forward(self, input):
+        hidden = torch.zeros(2, self.batch , 2048).to(
+            self.device
+        )
+
+        c_0 = torch.zeros(self.num_layer * 2, self.batch, 2048).to(
+            self.device
+        )
+
+        embedded = self.simple_elementwise_apply(self.embedding, input)
+        output, hidden = self.gru(embedded, (hidden, c_0))
+        hidden = hidden[0].view(-1, 2048 * 2)
+
+        output = self.classifier(hidden)
+
+        return output
+
+def simple_elementwise_apply(self, fn, packed_sequence):
+    return torch.nn.utils.rnn.PackedSequence(
+        fn(packed_sequence.data), packed_sequence.batch_sizes
+    )
+
+if __name__ =='__main__':
+    VideoRNN()
