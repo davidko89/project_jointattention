@@ -1,4 +1,7 @@
-''' CNN_LSTM binary classification (TD vs ASD) '''
+'''
+CNN_LSTM binary classification (TD vs ASD) 
+Transfer learning using VGG16 in Pytorch
+'''
 
 import torch
 import torch.nn as nn

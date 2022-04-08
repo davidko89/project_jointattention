@@ -5,17 +5,18 @@ import torch
 import torch.nn as nn
 from torchvision.transforms import transforms
 from torch.utils.data import DataLoader
-from data_loader import train_dataset
+from data_loader import VideoDataset
 from model import VideoRNN
 import torch.optim as optim
 
 PATH = 'weights/trained.pth'
-#%%
-x_train = np.load('./dataset/x_train.npy').astype(np.float32)  # (2586, 26, 34, 1)
-y_train = np.load('./dataset/y_train.npy').astype(np.float32)  # (2586, 1)
 
-train_transform = transforms.Compose([transforms.ToTensor()])
-train_dataset = train_dataset(x_train, y_train, transform=train_transform)
+#%%
+# x_train = np.load('./dataset/x_train.npy').astype(np.float32)
+# y_train = np.load('./dataset/y_train.npy').astype(np.float32)
+
+train_transform = transforms.ToTensor()
+train_dataset = VideoDataset(True, transform=train_transform)
 train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=4)
 
 model = VideoRNN()

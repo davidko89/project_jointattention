@@ -3,20 +3,14 @@ import torch
 import numpy as np 
 from torchvision.transforms import transforms
 from torch.utils.data import DataLoader
-from data_loader import test_dataset
+from data_loader import VideoDataset
 from model import VideoRNN
 
 PATH = './weights/trained.pth'
 
 #%%
-x_test = np.load('./dataset/x_val.npy').astype(np.float32)  # (288, 26, 34, 1)
-y_test = np.load('./dataset/y_val.npy').astype(np.float32)  # (288, 1)
-
-test_transform = transforms.Compose([
-    transforms.ToTensor()
-])
-
-test_dataset = test_dataset(x_test, y_test, transform=test_transform)
+test_transform = transforms.ToTensor()
+test_dataset = VideoDataset(False, transform=test_transform)
 test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=4)
 
 model = VideoRNN()
