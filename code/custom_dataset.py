@@ -38,51 +38,28 @@ class VideoDataset(Dataset):
         target_path = get_video_path(target_data['file_name'])
         x_path = Path(PROJECT_PATH, "data/processed_videos/IJA_npy",f"{target_path.stem}.npy")
 
-        return np.load(x_path), target_data['label'].item()
+        return np.load(x_path), target_data['label'].item(), x_path
        
 
 def get_video_path(file_name:str)->Path:
     return Path(VIDEO_PATH, 'IJA_npy', file_name)
 
-
-# custom collate function
-# def get_max_length(x):
-#     return len(max(x, key=len))
-
-# def pad_sequence(seq):
-#     def _pad(_it, _max_len):
-#         return [0] * (_max_len - len(_it)) + _it
-#     return [_pad(it, get_max_length(seq)) for it in seq]
-
-# def custom_collate(batch):
-#     transposed = zip(*batch)
-#     lst = []
-#     for samples in transposed:
-#         if isinstance(samples[0], int):
-#             lst.append(torch.LongTensor(samples))
-#         elif isinstance(samples[0], float):
-#             lst.append(torch.DoubleTensor(samples))
-#         elif isinstance(samples[0], collections.Sequence):
-#             lst.append(torch.LongTensor(pad_sequence(samples)))
-#     return lst
-
-# stream_dataset = StreamDataset(data_path)
-# stream_data_loader = torch.utils.data.dataloader.DataLoader(dataset=stream_dataset,                                                         
-#                                                             batch_size=batch_size,                                            
-#                                                         collate_fn=custom_collate,
-#                                                         shuffle=False)
-
+                                                                                                               
 # %%
 if __name__ =='__main__':
     train_dataset = VideoDataset(True)
     test_dataset = VideoDataset(False)
-    lengths = []
     from tqdm import tqdm
-    for i in tqdm(range(len(train_dataset))):
-        length_ = train_dataset[i][0].shape[0]
-        if length_ != 300:
-            lengths.append(length_)
+    lengths = {str(d[2]):d[0].shape[0] for d in tqdm(train_dataset) if d[0].shape[0] != 300}
 
     print(lengths)
+    
+    # import numpy as np
+    # data = np.arange()
 
-# %%
+    # for i in tqdm(range(len(train_dataset))):
+    #         length_ = train_dataset[i][0].shape[0]
+    #         if length_ > 300:
+    #            numpy.delete(arr, obj = (300 - length), axis=None)
+    #         if length_ < 300:
+    #             numpy.pad(array, pad_width, mode='constatnt', **kwargs)

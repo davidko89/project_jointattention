@@ -19,6 +19,9 @@ train_transform = transforms.ToTensor()
 train_dataset = VideoDataset(True, SPLIT_CSV_FILE, train_transform)
 train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
 
+
+#%%
+
 model = VideoRNN()
 model.to(device)
 criterion = nn.BCEWithLogitsLoss()
