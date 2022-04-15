@@ -9,11 +9,11 @@ import numpy as np
 import torchvision.models as models
 
 class VideoRNN(nn.Module):
-    def __init__(self, batch_size, device):
+    def __init__(self): # batch_size, device
         super(VideoRNN, self).__init__()
-
-        self.batch = batch_size
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        
+        # self.batch = batch_size
+        # self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
         # Loading vgg16
         vgg = models.vgg16(pretrained=True)

@@ -1,63 +1,63 @@
 #%%
-import matplotlib.pyplot as plt
-import numpy as np 
+from tqdm import tqdm
 import torch
 import torch.nn as nn
 from torchvision.transforms import transforms
 from torch.utils.data import DataLoader
-from data_loader import VideoDataset
+from custom_dataset import VideoDataset
 from model import VideoRNN
 import torch.optim as optim
 
-PATH = 'weights/trained.pth'
+SPLIT_CSV_FILE ='ija_label_train.csv'
+WEIGHT_PATH = 'weights/trained.pth'
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+NUM_EPOCHS = 50
+BATCH_SIZE = 64
 
 #%%
-# x_train = np.load('./dataset/x_train.npy').astype(np.float32)
-# y_train = np.load('./dataset/y_train.npy').astype(np.float32)
-
 train_transform = transforms.ToTensor()
-train_dataset = VideoDataset(True, transform=train_transform)
-train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=4)
+train_dataset = VideoDataset(True, SPLIT_CSV_FILE, train_transform)
+train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
 
 model = VideoRNN()
-model.to('cuda')
+model.to(device)
 criterion = nn.BCEWithLogitsLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.0001)
-epochs = 50
 
 #%%
 def train_model(model, criterion, optimizer): 
-    for epoch in range(epochs):
+    for epoch in tqdm(range(NUM_EPOCHS)):
         running_loss = 0.0
         running_acc = 0.0
 
-        for i, data in enumerate(train_dataset, 0):
-            input_1, labels = data[0].to('cuda'), data[1].to('cuda')
+        for batch_idx, (X, y) in enumerate(train_dataloader):
+            # get the inputs; data is a list of [x, y]
+            X = X.to(device)
+            y = y.to(device)
 
-            input = input_1.transpose(1, 3).transpose(2, 3)
-
+            # zero the parameter gradients
             optimizer.zero_grad()
 
-            outputs = model(input)
-
-            loss = criterion(outputs, labels)
+            # forward + backward + optimize
+            outputs = model(X)
+            loss = criterion(outputs, y)
             loss.backward()
             optimizer.step()
-
+            
+            # print statistics
             running_loss += loss.item()
-            running_acc += accuracy(outputs, labels)
+            running_acc += accuracy(outputs, y)
 
-            if i % 80 == 79:
+            if batch_idx % 64 == 63:
                 print('epoch: [%d/%d] train_loss: %.5f train_acc: %.5f' % (
-                    epoch + 1, epochs, running_loss / 80, running_acc / 80))
-                running_loss = 0.0
+                    epoch + 1, NUM_EPOCHS, running_loss / len(train_dataloader), running_acc / len(train_dataloader)))
 
     print("learning finish")
-    torch.save(model.state_dict(), PATH)
+    torch.save(model.state_dict(), WEIGHT_PATH)
 
 
 def accuracy(y_pred, y_test):
-    y_pred_tag = torch.round(torch.sigmoid(y_pred))
+    y_pred_tag = torch.sigmoid(y_pred)
 
     correct_results_sum = (y_pred_tag == y_test).sum().float()
     acc = correct_results_sum / y_test.shape[0]
@@ -67,4 +67,4 @@ def accuracy(y_pred, y_test):
 
 
 if __name__ =='__main__':
-    train_model()
+    train_model(model, criterion, optimizer)

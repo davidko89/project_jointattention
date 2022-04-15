@@ -1,9 +1,10 @@
+#%%
 from pathlib import Path
 import numpy as np
 import pandas as pd
 import cv2
 import skimage.transform
-from tqdm import tqdm
+# from tqdm import tqdm
 # from torchvision import transforms, utils
 
 PROJECT_PATH = Path(__file__).parents[1]
@@ -66,8 +67,19 @@ def main():
     
     task = 'IJA'
     
-    for file_name in tqdm(data.file_name):  
-        process_by_file(file_name, task)
+    # for file_name in tqdm(data.file_name):
+    file_name = data.loc[0, 'file_name']
+    process_by_file(file_name, task)
+
 
 if __name__ =='__main__':
-    main()
+    from line_profiler import LineProfiler
+
+    line_profiler = LineProfiler()
+    line_profiler.add_function(read_video)
+    line_profiler.add_function(resize_video)
+    line_profiler.add_function(process_by_file)
+    lp_wrapper = line_profiler(main)
+    lp_wrapper()
+    line_profiler.print_stats()
+

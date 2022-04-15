@@ -1,12 +1,14 @@
 #%%
 import torch
-import numpy as np 
 from torchvision.transforms import transforms
 from torch.utils.data import DataLoader
-from data_loader import VideoDataset
+from custom_dataset import VideoDataset
 from model import VideoRNN
 
-PATH = './weights/trained.pth'
+SPLIT_CSV_FILE ='ija_label_train.csv'
+WEIGHT_PATH = 'weights/trained.pth'
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 
 #%%
 test_transform = transforms.ToTensor()
@@ -14,9 +16,10 @@ test_dataset = VideoDataset(False, transform=test_transform)
 test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=4)
 
 model = VideoRNN()
-model.to('cuda')
-model.load_state_dict(torch.load(PATH))
+model.to(device)
+model.load_state_dict(torch.load(WEIGHT_PATH))
 model.eval()
+
 
 #%%
 def test_model(model):
@@ -24,14 +27,12 @@ def test_model(model):
     with torch.no_grad():
         total_acc = 0.0
         acc = 0.0
-        for i, test_data in enumerate(test_dataset, 0):
-            data, labels = test_data[0].to('cuda'), test_data[1].to('cuda')
+        for i, data in enumerate(test_dataloader, 0):
+            inputs, label = data[0].to(device), data[1].to(device)
 
-            data = data.transpose(1, 3).transpose(2, 3)
+            outputs = model(inputs)
 
-            outputs = model(data)
-
-            acc = accuracy(outputs, labels)
+            acc = accuracy(outputs, label)
             total_acc += acc
 
             count = i
