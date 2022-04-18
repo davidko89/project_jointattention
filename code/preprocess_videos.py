@@ -4,10 +4,9 @@ import pandas as pd
 import cv2
 import skimage.transform
 from tqdm import tqdm
-# from torchvision import transforms, utils
 
 PROJECT_PATH = Path(__file__).parents[1]
-PROCESSED_VIDEO_PATH = Path(PROJECT_PATH, 'data/processed_videos/IJA_npy')
+NPY_VIDEO_PATH = Path(PROJECT_PATH, 'data/processed_videos/IJA')
 RESIZED_HEIGHT, RESIZED_WIDTH = 224, 224
 RGB = 3
 # task_name = {'IJA', 'RJA_low', 'RJA_high_BL', 'RJA_high_BR', 'RJA_high_Lt', 'RJA_high_Rt'}
@@ -50,13 +49,13 @@ def resize_video(frame_arr):
     resized_frame = np.moveaxis(resized_frame, -1, 1)
     return resized_frame
 
+      
+def save_numpy_arr(arr:np.ndarray, file_name:str):
+    np.save(Path(NPY_VIDEO_PATH, file_name), arr)
 
-def save_numpy_arr(arr:np.ndarray, filename:str):
-    np.save(Path(PROCESSED_VIDEO_PATH, filename), arr)
 
-
-def process_by_file(file_name, task):
-    target_path = get_video_path(task, file_name)
+def process_by_file(task_name, file_name):
+    target_path = get_video_path(task_name, file_name)
     video_arr = read_video(target_path)
     save_numpy_arr(video_arr, f"{file_name.split('.')[0]}.npy")
 
@@ -64,10 +63,13 @@ def process_by_file(file_name, task):
 def main():
     data: pd.DataFrame = read_dataset("ija_video_file_with_label.csv").dropna()
     
-    task = 'IJA'
+    task_name = 'IJA'
     
-    for file_name in tqdm(data.file_name):  
-        process_by_file(file_name, task)
+    for file_name in tqdm(data.file_name):
+        process_by_file(file_name, task_name)
+
 
 if __name__ =='__main__':
     main()
+
+ 

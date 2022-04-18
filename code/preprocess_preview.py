@@ -8,7 +8,7 @@ import skimage.transform
 # from torchvision import transforms, utils
 
 PROJECT_PATH = Path(__file__).parents[1]
-PROCESSED_VIDEO_PATH = Path(PROJECT_PATH, 'data/processed_videos/IJA_npy')
+PROCESSED_VIDEO_PATH = Path(PROJECT_PATH, 'data/processed_videos/IJA')
 RESIZED_HEIGHT, RESIZED_WIDTH = 224, 224
 RGB = 3
 # task_name = {'IJA', 'RJA_low', 'RJA_high_BL', 'RJA_high_BR', 'RJA_high_Lt', 'RJA_high_Rt'}
@@ -68,7 +68,7 @@ def main():
     task = 'IJA'
     
     # for file_name in tqdm(data.file_name):
-    file_name = data.loc[0, 'file_name']
+    file_name = data.loc[4, 'file_name']
     process_by_file(file_name, task)
 
 
@@ -82,4 +82,5 @@ if __name__ =='__main__':
     lp_wrapper = line_profiler(main)
     lp_wrapper()
     line_profiler.print_stats()
+
 
