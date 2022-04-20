@@ -9,7 +9,7 @@ PROJECT_PATH= Path(__file__).parents[1]
 print(PROJECT_PATH)
 
 #%%
-dataset = pd.read_csv(Path(PROJECT_PATH, 'data/ija_video_file_with_label.csv')).dropna()
+dataset = pd.read_csv(Path(PROJECT_PATH, 'data/ija_video_file_with_score.csv')).dropna()
 print(dataset)
 
 #%%
@@ -37,8 +37,7 @@ dataset['train'] = dataset['id'].apply(lambda x:x in x_train_list)
 print(dataset)
 
 #%%
-dataset.to_csv(Path(PROJECT_PATH, 'data', "ija_label_train.csv"), index = False)
-
+dataset.to_csv(Path(PROJECT_PATH, 'data', "ija_score_train.csv"), index = False)
 
 
 # X = result.loc[result.label == 1.0, 'id'].to_numpy()

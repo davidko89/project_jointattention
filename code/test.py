@@ -1,11 +1,12 @@
 #%%
 import torch
+import torch.nn as nn
 from torchvision.transforms import transforms
 from torch.utils.data import DataLoader
-from custom_dataset import VideoDataset
-from model import VideoRNN
+from custom_dataset_diagnosis import VideoDataset
+import model
 
-SPLIT_CSV_FILE ='ija_label_train.csv'
+SPLIT_CSV_FILE ='ija_diagnosis_train.csv'
 WEIGHT_PATH = 'weights/trained.pth'
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
@@ -15,7 +16,7 @@ test_transform = transforms.ToTensor()
 test_dataset = VideoDataset(False, transform=test_transform)
 test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=4)
 
-model = VideoRNN()
+model = nn.Sequential()
 model.to(device)
 model.load_state_dict(torch.load(WEIGHT_PATH))
 model.eval()

@@ -1,55 +1,74 @@
-'''
-CNN_LSTM binary classification (TD vs ASD) 
-Transfer learning using VGG16 in Pytorch
-'''
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torchvision.models as models
 
-class VideoRNN(nn.Module):
-    def __init__(self, n_classes, batch_size, device):
-        super(VideoRNN, self).__init__()
-        self.batch_size = batch_size
-        self.device = device
-        
-        # Loading vgg16
-        vgg = models.vgg16(pretrained=True)
-        
-        # Removing last layer of vgg16
-        embed = nn.Sequential(*list(vgg.classifier.children())[:-1])
-        vgg.classifier = embed
+DROPOUT = 0.4
+BATCH_SIZE = 2
+SEQ_LEN = 300
+NUM_LSTM_LAYERS = 1
+LSTM_HIDDEN_DIM = 128
 
-        # Freezing the model last 3 layers
-        for param in vgg.parameters():
+
+class VGG16LRCN(nn.Module):
+    def __init__(self):
+        super(VGG16LRCN, self).__init__()
+        self.lstm_hidden_dim = LSTM_HIDDEN_DIM
+        self.num_lstm_layers = NUM_LSTM_LAYERS
+        self.batch_size = BATCH_SIZE
+        self.seq_len = SEQ_LEN
+
+        self.basemodel = models.vgg16(pretrained=True).features
+        # print("Loaded pretrained VGG16 weights")
+
+        for param in self.parameters():
             param.requires_grad = False
 
-        self.embedding = vgg
-        self.gru = nn.LSTM(4096, 2048, bidirectional = True)
+        # print("made VGG16 non-trainable")
 
-        # Classification layer (*2 because bidirectional)
-        self.classifier = nn.Sequential(
-            nn.Linear(2048 * 2 , 256),
-            nn.ReLU(),
-            nn.Linear(256, n_classes),
+        # number of features = 512 * 7 * 7
+
+        self.drop1 = nn.Dropout(DROPOUT)
+
+        self.lstm1 = nn.LSTM(
+            25088, self.lstm_hidden_dim, self.num_lstm_layers, batch_first=True
         )
+        self.linear1 = nn.Linear(self.lstm_hidden_dim, 512)
+        self.linear2 = nn.Linear(512, 2)
 
-    def forward(self, input):
-            hidden = torch.zeros(2, self.batch_size, 2048).to(self.device)
+    def forward(self, x):
+        batch_size, seq_len, c, h, w = x.size()
+        # reshape input to be (batch_size * seq_len, input_size)
+        x = x.view(batch_size * seq_len, c, h, w)
 
-            c_0 = torch.zeros(self.num_layer * 2, self.batch_size, 2048).to(self.device)
+        out = self.basemodel(x)
 
-            embedded = self.simple_elementwise_apply(self.embedding, input)
-            output, hidden = self.gru(embedded, (hidden, c_0))
-            hidden = hidden[0].view(-1, 2048 * 2)
+        out = out.view(
+            out.size(0), -1
+        )  # 1st dimension of tensor (batch_size) to vector
 
-            output = self.classifier(hidden)
+        # make output as (batch_size, seq_len, output_size)
+        out = out.view(batch_size, seq_len, -1)
 
-            return output
+        out, (h_n, c_n) = self.lstm1(out)
+        
+        out = out[:, -1]  # get output of the last lstm
+        out = self.linear1(out)
+        out = F.relu(out)
 
-    def simple_elementwise_apply(self, fn, packed_sequence):
-        return torch.nn.utils.rnn.PackedSequence(
-            fn(packed_sequence.data), packed_sequence.batch_sizes
-        )
+        out = self.drop1(out)
+        out = self.linear2(out)
 
-if __name__ =='__main__':
-    VideoRNN()
+        return out
+
+
+if __name__ == "__main__":
+    # vgg = models.vgg16(pretrained=True)
+    # output = vgg.features(torch.rand(size=(300, 3, 224, 224)))
+    # print(vgg.features)
+    # print(output.shape)
+    # print(output.view(-1).shape)
+
+    model = VGG16LRCN()
+    arr = torch.rand(size=(1, 300, 3, 224, 224))
+    pred_y = model(arr)

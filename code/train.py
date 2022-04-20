@@ -1,31 +1,34 @@
-#%%
 from tqdm import tqdm
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
-from custom_dataset import VideoDataset
-from model import VideoRNN
+from custom_dataset_diagnosis import VideoDataset
+import model
+from model import TimeWarp, extractlastcell
+import torchvision.models as models
 
-SPLIT_PKL_FILE = '../data/processed_videos/IJA/train_label.pkl'
-WEIGHT_PATH = 'weights/trained.pth'
-NUM_EPOCHS = 50
-n_classes = 2
-batch_size = 8
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-model = VideoRNN()
+SPLIT_CSV_FILE = "ija_diagnosis_train.csv"
+WEIGHT_PATH = "weights/trained.pth"
+NUM_EPOCHS = 10
+BATCH_SIZE = 2
+LEARNING_RATE = 0.001
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model.to(device)
 criterion = nn.BCEWithLogitsLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.0001)
+optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
 
 train_transform = transforms.ToTensor()
-train_dataset = VideoDataset(True, '../data/processed_videos/IJA/train_data.npy', SPLIT_PKL_FILE, train_transform)
-train_dataloader = DataLoader(train_dataset, batch_size=8, shuffle=True, num_workers=4, pin_memory=True)
+train_dataset = VideoDataset(True, SPLIT_CSV_FILE, train_transform)
+train_dataloader = DataLoader(
+    train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4
+)
 
 
-def train_model(model, criterion, optimizer): 
+def train_model(model, criterion, optimizer):
     for epoch in tqdm(range(NUM_EPOCHS)):
         running_loss = 0.0
         running_acc = 0.0
@@ -33,7 +36,10 @@ def train_model(model, criterion, optimizer):
         for batch_idx, (X, y) in enumerate(train_dataloader):
             # get the inputs; data is a list of [x, y]
             X = X.to(device)
-            y = y.to(device)
+            # print(X.shape)
+            y = y.int().to(device)
+
+            print(y.dtype)
 
             # zero the parameter gradients
             optimizer.zero_grad()
@@ -43,14 +49,21 @@ def train_model(model, criterion, optimizer):
             loss = criterion(outputs, y)
             loss.backward()
             optimizer.step()
-            
+
             # print statistics
             running_loss += loss.item()
             running_acc += accuracy(outputs, y)
 
-            if batch_idx % 8 == 7:
-                print('epoch: [%d/%d] train_loss: %.5f train_acc: %.5f' % (
-                    epoch + 1, NUM_EPOCHS, running_loss / len(train_dataloader), running_acc / len(train_dataloader)))
+            if batch_idx % BATCH_SIZE == BATCH_SIZE - 1:
+                print(
+                    "epoch: [%d/%d] train_loss: %.5f train_acc: %.5f"
+                    % (
+                        epoch + 1,
+                        NUM_EPOCHS,
+                        running_loss / len(train_dataloader),
+                        running_acc / len(train_dataloader),
+                    )
+                )
 
     print("learning finish")
     torch.save(model.state_dict(), WEIGHT_PATH)
@@ -66,5 +79,5 @@ def accuracy(y_pred, y_test):
     return acc
 
 
-if __name__ =='__main__':
+if __name__ == "__main__":
     train_model(model, criterion, optimizer)
