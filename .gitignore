@@ -5,4 +5,5 @@ env
 *.txt
 *.jpg
 *.csv
+*.npy
 **/.ipynb_checkpoints
