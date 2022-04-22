@@ -1,3 +1,5 @@
+**/.ipynb_checkpoints
+data/
 env
 .vscode
 *.mp4
@@ -6,4 +8,4 @@ env
 *.jpg
 *.csv
 *.npy
-**/.ipynb_checkpoints
+
