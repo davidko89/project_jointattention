@@ -27,14 +27,15 @@ def train_model(model, batch_size, patience, n_epochs):
     for epoch in tqdm(range(1, n_epochs + 1)):
         # train the model#
         model.train()  # prep model for training
-        for batch, (data, target) in enumerate(train_loader, 1):
+        for batch_idx, (X, y) in enumerate(train_loader):
+            X = X.float().to(device)
+            y = y.int().to(device)
+
             # clear the gradients of all optimized variables
             optimizer.zero_grad()
-            # forward pass: 입력된 값을 모델로 전달하여 예측 출력 계산
-            output = model(data)
-            # calculate the loss
-            loss = criterion(output, target)
-            # backward pass: 모델의 파라미터와 관련된 loss의 그래디언트 계산
+            # forward pass
+            output = model(X)
+            loss = criterion(output, y)
             loss.backward()
             # perform a single optimization step (parameter update)
             optimizer.step()
@@ -43,11 +44,11 @@ def train_model(model, batch_size, patience, n_epochs):
 
         # validate the model#
         model.eval()  # prep model for evaluation
-        for data, target in valid_loader:
+        for X, y in valid_loader:
             # forward pass: 입력된 값을 모델로 전달하여 예측 출력 계산
-            output = model(data)
+            output = model(X)
             # calculate the loss
-            loss = criterion(output, target)
+            loss = criterion(output, y)
             # record validation loss
             valid_losses.append(loss.item())
 
@@ -72,8 +73,7 @@ def train_model(model, batch_size, patience, n_epochs):
         train_losses = []
         valid_losses = []
 
-        # early_stopping는 validation loss가 감소하였는지 확인이 필요하며,
-        # 만약 감소하였을경우 현제 모델을 checkpoint로 만든다.
+        # early_stopping는 validation loss가 감소하였는지 확인이 필요하며, 만약 감소하였을경우 현제 모델을 checkpoint로 만든다.
         early_stopping(valid_loss, model)
 
         if early_stopping.early_stop:
@@ -88,36 +88,29 @@ def train_model(model, batch_size, patience, n_epochs):
 
 batch_size = 4
 n_epochs = 10
+patience = 7 # early stopping patience: validation loss가 개선된 마지막 시간 이후로 얼마나 기다릴지 지정
 
 train_loader, test_loader, valid_loader = create_data_loader(batch_size)
-
-# early stopping patience;
-# validation loss가 개선된 마지막 시간 이후로 얼마나 기다릴지 지정
-patience = 5
-
 model, train_loss, valid_loss = train_model(model, batch_size, patience, n_epochs)
 
 
 if __name__ == "__main__":
     train_model()
 
-    import matplotlib.pyplot as plt
-
-    # 훈련이 진행되는 과정에 따라 loss를 시각화
-    fig = plt.figure(figsize=(10, 8))
-    plt.plot(range(1, len(train_loss) + 1), train_loss, label="Training Loss")
-    plt.plot(range(1, len(valid_loss) + 1), valid_loss, label="Validation Loss")
-
-    # validation loss의 최저값 지점을 찾기
-    minposs = valid_loss.index(min(valid_loss)) + 1
-    plt.axvline(minposs, linestyle="--", color="r", label="Early Stopping Checkpoint")
-
-    plt.xlabel("epochs")
-    plt.ylabel("loss")
-    plt.ylim(0, 0.5)  # 일정한 scale
-    plt.xlim(0, len(train_loss) + 1)  # 일정한 scale
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
-    fig.savefig("loss_plot.png", bbox_inches="tight")
+    # import matplotlib.pyplot as plt
+    # # 훈련이 진행되는 과정에 따라 loss를 시각화
+    # fig = plt.figure(figsize=(10, 8))
+    # plt.plot(range(1, len(train_loss) + 1), train_loss, label="Training Loss")
+    # plt.plot(range(1, len(valid_loss) + 1), valid_loss, label="Validation Loss")
+    # # validation loss의 최저값 지점을 찾기
+    # minposs = valid_loss.index(min(valid_loss)) + 1
+    # plt.axvline(minposs, linestyle="--", color="r", label="Early Stopping Checkpoint")
+    # plt.xlabel("epochs")
+    # plt.ylabel("loss")
+    # plt.ylim(0, 0.5)  # 일정한 scale
+    # plt.xlim(0, len(train_loss) + 1)  # 일정한 scale
+    # plt.grid(True)
+    # plt.legend()
+    # plt.tight_layout()
+    # plt.show()
+    # fig.savefig("loss_plot.png", bbox_inches="tight")
