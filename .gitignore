@@ -1,11 +1,19 @@
 **/.ipynb_checkpoints
+__pycache__/
+.mypy_cache/
 data/
+weights/
 env
+.env
+.venv
 .vscode
+.cache
 *.mp4
 *.MP4
 *.txt
 *.jpg
 *.csv
 *.npy
+*.pth
+*.pt
 

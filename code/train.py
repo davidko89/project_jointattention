@@ -1,83 +1,123 @@
 from tqdm import tqdm
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader
-from torchvision.transforms import transforms
-from custom_dataset_diagnosis import VideoDataset
-import model
-from model import TimeWarp, extractlastcell
-import torchvision.models as models
+from custom_dataset import create_data_loader
+from model import VGG16LRCN
+from pathlib import Path
+from earlystopping import EarlyStopping
 
-SPLIT_CSV_FILE = "ija_diagnosis_train.csv"
-WEIGHT_PATH = "weights/trained.pth"
-NUM_EPOCHS = 10
-BATCH_SIZE = 2
-LEARNING_RATE = 0.001
 
+model = VGG16LRCN()
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model.to(device)
-criterion = nn.BCEWithLogitsLoss()
-optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(model.parameters(), lr=0.001)
 
 
-train_transform = transforms.ToTensor()
-train_dataset = VideoDataset(True, SPLIT_CSV_FILE, train_transform)
-train_dataloader = DataLoader(
-    train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4
-)
+def train_model(model, batch_size, patience, n_epochs):
+    train_losses = []
+    valid_losses = []
+    avg_train_losses = []
+    avg_valid_losses = []
 
+    early_stopping = EarlyStopping(patience=patience, verbose=True)
 
-def train_model(model, criterion, optimizer):
-    for epoch in tqdm(range(NUM_EPOCHS)):
-        running_loss = 0.0
-        running_acc = 0.0
-
-        for batch_idx, (X, y) in enumerate(train_dataloader):
-            # get the inputs; data is a list of [x, y]
-            X = X.to(device)
-            # print(X.shape)
-            y = y.int().to(device)
-
-            print(y.dtype)
-
-            # zero the parameter gradients
+    for epoch in tqdm(range(1, n_epochs + 1)):
+        # train the model#
+        model.train()  # prep model for training
+        for batch, (data, target) in enumerate(train_loader, 1):
+            # clear the gradients of all optimized variables
             optimizer.zero_grad()
-
-            # forward + backward + optimize
-            outputs = model(X)
-            loss = criterion(outputs, y)
+            # forward pass: 입력된 값을 모델로 전달하여 예측 출력 계산
+            output = model(data)
+            # calculate the loss
+            loss = criterion(output, target)
+            # backward pass: 모델의 파라미터와 관련된 loss의 그래디언트 계산
             loss.backward()
+            # perform a single optimization step (parameter update)
             optimizer.step()
+            # record training loss
+            train_losses.append(loss.item())
 
-            # print statistics
-            running_loss += loss.item()
-            running_acc += accuracy(outputs, y)
+        # validate the model#
+        model.eval()  # prep model for evaluation
+        for data, target in valid_loader:
+            # forward pass: 입력된 값을 모델로 전달하여 예측 출력 계산
+            output = model(data)
+            # calculate the loss
+            loss = criterion(output, target)
+            # record validation loss
+            valid_losses.append(loss.item())
 
-            if batch_idx % BATCH_SIZE == BATCH_SIZE - 1:
-                print(
-                    "epoch: [%d/%d] train_loss: %.5f train_acc: %.5f"
-                    % (
-                        epoch + 1,
-                        NUM_EPOCHS,
-                        running_loss / len(train_dataloader),
-                        running_acc / len(train_dataloader),
-                    )
-                )
+        # print 학습/검증 statistics
+        # epoch당 평균 loss 계산
+        train_loss = np.average(train_losses)
+        valid_loss = np.average(valid_losses)
+        avg_train_losses.append(train_loss)
+        avg_valid_losses.append(valid_loss)
 
-    print("learning finish")
-    torch.save(model.state_dict(), WEIGHT_PATH)
+        epoch_len = len(str(n_epochs))
+
+        print_msg = (
+            f"[{epoch:>{epoch_len}}/{n_epochs:>{epoch_len}}] "
+            + f"train_loss: {train_loss:.5f} "
+            + f"valid_loss: {valid_loss:.5f}"
+        )
+
+        print(print_msg)
+
+        # clear lists to track next epoch
+        train_losses = []
+        valid_losses = []
+
+        # early_stopping는 validation loss가 감소하였는지 확인이 필요하며,
+        # 만약 감소하였을경우 현제 모델을 checkpoint로 만든다.
+        early_stopping(valid_loss, model)
+
+        if early_stopping.early_stop:
+            print("Early stopping")
+            break
+
+    # best model이 저장되어있는 last checkpoint를 로드한다.
+    model.load_state_dict(torch.load("checkpoint.pt"))
+
+    return model, avg_train_losses, avg_valid_losses
 
 
-def accuracy(y_pred, y_test):
-    y_pred_tag = torch.sigmoid(y_pred)
+batch_size = 4
+n_epochs = 10
 
-    correct_results_sum = (y_pred_tag == y_test).sum().float()
-    acc = correct_results_sum / y_test.shape[0]
-    acc = torch.round(acc * 100)
+train_loader, test_loader, valid_loader = create_data_loader(batch_size)
 
-    return acc
+# early stopping patience;
+# validation loss가 개선된 마지막 시간 이후로 얼마나 기다릴지 지정
+patience = 5
+
+model, train_loss, valid_loss = train_model(model, batch_size, patience, n_epochs)
 
 
 if __name__ == "__main__":
-    train_model(model, criterion, optimizer)
+    train_model()
+
+    import matplotlib.pyplot as plt
+
+    # 훈련이 진행되는 과정에 따라 loss를 시각화
+    fig = plt.figure(figsize=(10, 8))
+    plt.plot(range(1, len(train_loss) + 1), train_loss, label="Training Loss")
+    plt.plot(range(1, len(valid_loss) + 1), valid_loss, label="Validation Loss")
+
+    # validation loss의 최저값 지점을 찾기
+    minposs = valid_loss.index(min(valid_loss)) + 1
+    plt.axvline(minposs, linestyle="--", color="r", label="Early Stopping Checkpoint")
+
+    plt.xlabel("epochs")
+    plt.ylabel("loss")
+    plt.ylim(0, 0.5)  # 일정한 scale
+    plt.xlim(0, len(train_loss) + 1)  # 일정한 scale
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+    fig.savefig("loss_plot.png", bbox_inches="tight")
