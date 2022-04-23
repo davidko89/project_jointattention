@@ -3,14 +3,15 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from custom_dataset import create_data_loader
+from custom_dataset import VideoDataset, create_data_loader
 from model import VGG16LRCN
-from pathlib import Path
 from earlystopping import EarlyStopping
 
 
 model = VGG16LRCN()
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cpu")
+# torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 model.to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.001)
@@ -27,9 +28,9 @@ def train_model(model, batch_size, patience, n_epochs):
     for epoch in tqdm(range(1, n_epochs + 1)):
         # train the model#
         model.train()  # prep model for training
-        for batch_idx, (X, y) in enumerate(train_loader):
+        for batch_idx, (X, y) in enumerate(train_loader, 1):
             X = X.float().to(device)
-            y = y.int().to(device)
+            y = y.to(device)
 
             # clear the gradients of all optimized variables
             optimizer.zero_grad()
@@ -44,7 +45,9 @@ def train_model(model, batch_size, patience, n_epochs):
 
         # validate the model#
         model.eval()  # prep model for evaluation
-        for X, y in valid_loader:
+        for (X, y) in valid_loader:
+            X = X.float().to(device)
+            y = y.to(device)
             # forward pass: 입력된 값을 모델로 전달하여 예측 출력 계산
             output = model(X)
             # calculate the loss
@@ -88,7 +91,7 @@ def train_model(model, batch_size, patience, n_epochs):
 
 batch_size = 4
 n_epochs = 10
-patience = 7 # early stopping patience: validation loss가 개선된 마지막 시간 이후로 얼마나 기다릴지 지정
+patience = 7  # early stopping patience: validation loss가 개선된 마지막 시간 이후로 얼마나 기다릴지 지정
 
 train_loader, test_loader, valid_loader = create_data_loader(batch_size)
 model, train_loss, valid_loss = train_model(model, batch_size, patience, n_epochs)

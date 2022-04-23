@@ -51,7 +51,7 @@ class VGG16LRCN(nn.Module):
         out = out.view(batch_size, seq_len, -1)
 
         out, (h_n, c_n) = self.lstm1(out)
-        
+
         out = out[:, -1]  # get output of the last lstm
         out = self.linear1(out)
         out = F.relu(out)
@@ -68,7 +68,6 @@ if __name__ == "__main__":
     # print(vgg.features)
     # print(output.shape)
     # print(output.view(-1).shape)
-
     model = VGG16LRCN()
     arr = torch.rand(size=(1, 300, 3, 224, 224))
     pred_y = model(arr)
