@@ -9,7 +9,6 @@ PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 NPY_VIDEO_PATH = Path(PROJECT_PATH, "data/processed_videos/IJA")
 SPLIT_CSV_FILE = "ija_diagnosis_sets.csv"
-BATCH_SIZE = 4
 
 
 class VideoDataset(Dataset):
@@ -51,19 +50,19 @@ def create_data_loader(batch_size):
     transform = transforms.ToTensor()
     train_loader = DataLoader(
         VideoDataset("train"),
-        batch_size=BATCH_SIZE,
+        batch_size=batch_size,
         shuffle=True,
         num_workers=0,
     )
     valid_loader = DataLoader(
         VideoDataset("valid"),
-        batch_size=BATCH_SIZE,
+        batch_size=batch_size,
         shuffle=False,
         num_workers=0,
     )
     test_loader = DataLoader(
         VideoDataset("test"),
-        batch_size=BATCH_SIZE,
+        batch_size=batch_size,
         shuffle=False,
         num_workers=0,
     )
@@ -72,8 +71,8 @@ def create_data_loader(batch_size):
 
 
 if __name__ == "__main__":
-    train_dataset = VideoDataset("train")
-    print(train_dataset[0])
-    X, y = train_dataset[0]
-    print(X.dtype)
-    print(type(y))
+    train_loader, _, _ = create_data_loader(2)
+    for batch_idx, (x, y) in enumerate(train_loader):
+        print(x.shape)
+        print(y)
+        break

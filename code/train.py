@@ -8,24 +8,27 @@ from model import VGG16LRCN
 from earlystopping import EarlyStopping
 
 
-model = VGG16LRCN()
-device = torch.device("cpu")
-# torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-model.to(device)
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(model.parameters(), lr=0.001)
+BATCH_SIZE = 2
+N_EPOCHS = 10
+PATIENCE = 7
 
 
-def train_model(model, batch_size, patience, n_epochs):
+def train_model(
+    model,
+    n_epochs,
+    train_loader,
+    valid_loader,
+    optimizer,
+    criterion,
+    early_stopping,
+    device,
+):
     train_losses = []
     valid_losses = []
     avg_train_losses = []
     avg_valid_losses = []
 
-    early_stopping = EarlyStopping(patience=patience, verbose=True)
-
-    for epoch in tqdm(range(1, n_epochs + 1)):
+    for epoch in range(1, n_epochs + 1):
         # train the model#
         model.train()  # prep model for training
         for batch_idx, (X, y) in enumerate(train_loader, 1):
@@ -42,7 +45,9 @@ def train_model(model, batch_size, patience, n_epochs):
             optimizer.step()
             # record training loss
             train_losses.append(loss.item())
-
+            print(
+                f"epoch: {epoch}; batch:{batch_idx}/{len(train_loader)}; train_loss:{loss.item():.2f}"
+            )
         # validate the model#
         model.eval()  # prep model for evaluation
         for (X, y) in valid_loader:
@@ -54,6 +59,9 @@ def train_model(model, batch_size, patience, n_epochs):
             loss = criterion(output, y)
             # record validation loss
             valid_losses.append(loss.item())
+            print(
+                f"epoch: {epoch}; batch:{batch_idx}/{len(train_loader)}; valid_loss:{loss.item():.2f}"
+            )
 
         # print 학습/검증 statistics
         # epoch당 평균 loss 계산
@@ -89,31 +97,47 @@ def train_model(model, batch_size, patience, n_epochs):
     return model, avg_train_losses, avg_valid_losses
 
 
-batch_size = 4
-n_epochs = 10
-patience = 7  # early stopping patience: validation loss가 개선된 마지막 시간 이후로 얼마나 기다릴지 지정
+def main():
+    model = VGG16LRCN()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # torch.device("cpu")
 
-train_loader, test_loader, valid_loader = create_data_loader(batch_size)
-model, train_loss, valid_loss = train_model(model, batch_size, patience, n_epochs)
+    model.to(device)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(model.parameters(), lr=0.001)
+    early_stopping = EarlyStopping(patience=PATIENCE, verbose=True)
+
+    train_loader, test_loader, valid_loader = create_data_loader(BATCH_SIZE)
+    model, train_loss, valid_loss = train_model(
+        model,
+        N_EPOCHS,
+        train_loader,
+        valid_loader,
+        optimizer,
+        criterion,
+        early_stopping,
+        device,
+    )
 
 
 if __name__ == "__main__":
-    train_model()
+    main()
 
-    # import matplotlib.pyplot as plt
-    # # 훈련이 진행되는 과정에 따라 loss를 시각화
-    # fig = plt.figure(figsize=(10, 8))
-    # plt.plot(range(1, len(train_loss) + 1), train_loss, label="Training Loss")
-    # plt.plot(range(1, len(valid_loss) + 1), valid_loss, label="Validation Loss")
-    # # validation loss의 최저값 지점을 찾기
-    # minposs = valid_loss.index(min(valid_loss)) + 1
-    # plt.axvline(minposs, linestyle="--", color="r", label="Early Stopping Checkpoint")
-    # plt.xlabel("epochs")
-    # plt.ylabel("loss")
-    # plt.ylim(0, 0.5)  # 일정한 scale
-    # plt.xlim(0, len(train_loss) + 1)  # 일정한 scale
-    # plt.grid(True)
-    # plt.legend()
-    # plt.tight_layout()
-    # plt.show()
-    # fig.savefig("loss_plot.png", bbox_inches="tight")
+
+# import matplotlib.pyplot as plt
+# # 훈련이 진행되는 과정에 따라 loss를 시각화
+# fig = plt.figure(figsize=(10, 8))
+# plt.plot(range(1, len(train_loss) + 1), train_loss, label="Training Loss")
+# plt.plot(range(1, len(valid_loss) + 1), valid_loss, label="Validation Loss")
+# # validation loss의 최저값 지점을 찾기
+# minposs = valid_loss.index(min(valid_loss)) + 1
+# plt.axvline(minposs, linestyle="--", color="r", label="Early Stopping Checkpoint")
+# plt.xlabel("epochs")
+# plt.ylabel("loss")
+# plt.ylim(0, 0.5)  # 일정한 scale
+# plt.xlim(0, len(train_loss) + 1)  # 일정한 scale
+# plt.grid(True)
+# plt.legend()
+# plt.tight_layout()
+# plt.show()
+# fig.savefig("loss_plot.png", bbox_inches="tight")

@@ -9,9 +9,10 @@ Create a classification model for ASD(Autism Spectrum Disorder) and TD(Typical d
 code
 data
     assembly
+    processed_videos
     video_npy 
-    ija_label_train.csv
-    ija_video_file_with_label.csv
+    ija_diagnosis_sets.csv
+    ija_videofile_with_dx.csv
 ## Data
 ### [`data/dataset_videos.csv`](data/dataset_videos.csv)
 * file_name
