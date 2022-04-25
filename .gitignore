@@ -1,7 +1,8 @@
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-**/.ipynb_checkpoints
+*.pyc
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
 .mypy_cache/
 data/
 weights/
