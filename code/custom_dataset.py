@@ -67,12 +67,17 @@ def create_data_loader(batch_size):
         num_workers=0,
     )
 
-    return train_loader, test_loader, valid_loader
+    return train_loader, valid_loader, test_loader
 
 
 if __name__ == "__main__":
     train_loader, _, _ = create_data_loader(2)
-    for batch_idx, (x, y) in enumerate(train_loader):
-        print(x.shape)
+    for batch_idx, (X, y) in enumerate(train_loader):
+        print(X.shape)
         print(y)
         break
+    # _, _, test_loader = create_data_loader(1)
+    # for batch_idx, (X, y) in enumerate(test_loader):
+    #     print(X.shape)
+    #     print(y)
+    #     break

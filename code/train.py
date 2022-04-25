@@ -1,11 +1,15 @@
-from tqdm import tqdm
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from custom_dataset import VideoDataset, create_data_loader
+from custom_dataset import create_data_loader
 from model import VGG16LRCN
 from earlystopping import EarlyStopping
+from pathlib import Path
+
+
+PROJECT_PATH = Path(__file__).parents[1]
+CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint/checkpoint.pt")
 
 
 BATCH_SIZE = 2
@@ -21,7 +25,7 @@ def train_model(
     optimizer,
     criterion,
     early_stopping,
-    device,
+    device,  
 ):
     train_losses = []
     valid_losses = []
@@ -60,7 +64,7 @@ def train_model(
             # record validation loss
             valid_losses.append(loss.item())
             print(
-                f"epoch: {epoch}; batch:{batch_idx}/{len(train_loader)}; valid_loss:{loss.item():.2f}"
+                f"epoch: {epoch}; batch:{batch_idx}/{len(valid_loader)}; valid_loss:{loss.item():.2f}"
             )
 
         # print 학습/검증 statistics
@@ -92,7 +96,7 @@ def train_model(
             break
 
     # best model이 저장되어있는 last checkpoint를 로드한다.
-    model.load_state_dict(torch.load("checkpoint.pt"))
+    model.load_state_dict(torch.load(CHECKPOINT_PATH))
 
     return model, avg_train_losses, avg_valid_losses
 
@@ -100,14 +104,12 @@ def train_model(
 def main():
     model = VGG16LRCN()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # torch.device("cpu")
-
     model.to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.001)
     early_stopping = EarlyStopping(patience=PATIENCE, verbose=True)
 
-    train_loader, test_loader, valid_loader = create_data_loader(BATCH_SIZE)
+    train_loader, valid_loader, test_loader = create_data_loader(BATCH_SIZE)
     model, train_loss, valid_loss = train_model(
         model,
         N_EPOCHS,
@@ -122,22 +124,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# import matplotlib.pyplot as plt
-# # 훈련이 진행되는 과정에 따라 loss를 시각화
-# fig = plt.figure(figsize=(10, 8))
-# plt.plot(range(1, len(train_loss) + 1), train_loss, label="Training Loss")
-# plt.plot(range(1, len(valid_loss) + 1), valid_loss, label="Validation Loss")
-# # validation loss의 최저값 지점을 찾기
-# minposs = valid_loss.index(min(valid_loss)) + 1
-# plt.axvline(minposs, linestyle="--", color="r", label="Early Stopping Checkpoint")
-# plt.xlabel("epochs")
-# plt.ylabel("loss")
-# plt.ylim(0, 0.5)  # 일정한 scale
-# plt.xlim(0, len(train_loss) + 1)  # 일정한 scale
-# plt.grid(True)
-# plt.legend()
-# plt.tight_layout()
-# plt.show()
-# fig.savefig("loss_plot.png", bbox_inches="tight")

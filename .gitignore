@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 *.pyc
+*.$py.class
 .ipynb_checkpoints/
 */.ipynb_checkpoints/*
 .mypy_cache/

@@ -1,13 +1,16 @@
 import numpy as np
 import torch
+from pathlib import Path
 
-WEIGHTS_PATH = "weights/trained.pth"
+
+PROJECT_PATH = Path(__file__).parents[1]
+CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint/checkpoint.pt")
 
 
 class EarlyStopping:
     """주어진 patience 이후로 validation loss가 개선되지 않으면 학습을 조기 중지"""
 
-    def __init__(self, patience=7, verbose=False, delta=0, path=WEIGHTS_PATH):
+    def __init__(self, patience=7, verbose=False, delta=0, path=CHECKPOINT_PATH):
         """
         Args:
             patience (int): validation loss가 개선된 후 기다리는 기간
@@ -17,7 +20,7 @@ class EarlyStopping:
             delta (float): 개선되었다고 인정되는 monitered quantity의 최소 변화
                             Default: 0
             path (str): checkpoint저장 경로
-                            Default: 'checkpoint.pt' -> WEIGHTS_PATH
+                            Default: 'checkpoint.pt' -> path
         """
         self.patience = patience
         self.verbose = verbose
