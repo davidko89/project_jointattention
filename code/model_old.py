@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
 
-
 DROPOUT = 0.4
 BATCH_SIZE = 2
 SEQ_LEN = 300
@@ -11,23 +10,25 @@ NUM_LSTM_LAYERS = 1
 LSTM_HIDDEN_DIM = 128
 
 
-class CNNLRCN(nn.Module):
-    def __init__(self, model_name):
-        super(CNNLRCN, self).__init__()
+class VGG16LRCN(nn.Module):
+    def __init__(self):
+        super(VGG16LRCN, self).__init__()
         self.lstm_hidden_dim = LSTM_HIDDEN_DIM
         self.num_lstm_layers = NUM_LSTM_LAYERS
         self.batch_size = BATCH_SIZE
         self.seq_len = SEQ_LEN
-        self.model_name = model_name
 
-        # if self.model_name == 'vgg':
+
         self.basemodel = models.vgg16(pretrained=True).features
-        # self.basemodel = models.vgg16(pretrained=True).features
+        #self.basemodel = models.vgg16(pretrained=True).features
+        
 
         # print("Loaded pretrained VGG16 weights")
 
         for param in self.parameters():
             param.requires_grad = False
+
+        # print("made VGG16 non-trainable")
 
         # number of features = 512 * 7 * 7
 
@@ -72,7 +73,7 @@ if __name__ == "__main__":
     # print(vgg.features)
     # print(output.shape)
     # print(output.view(-1).shape)
-    model = CNNLRCN()
+    model = VGG16LRCN()
     arr = torch.rand(size=(BATCH_SIZE, 300, 3, 224, 224))
     # arr = arr.to("cuda")
     # model.to("cuda")

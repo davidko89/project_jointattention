@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import pandas as pd
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
@@ -12,11 +13,7 @@ SPLIT_CSV_FILE = "ija_diagnosis_sets.csv"
 
 
 class VideoDataset(Dataset):
-    def __init__(
-        self,
-        group: str,
-        split_csv_file=SPLIT_CSV_FILE,
-    ):
+    def __init__(self, group: str, split_csv_file=SPLIT_CSV_FILE, transform=None):
         """
         Args:
             split_csv_file: "ija_diagnosis_sets.csv"
@@ -32,14 +29,18 @@ class VideoDataset(Dataset):
         else:
             raise "group must be train, valid, or test"
 
+        self.transform = transform
+
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
         target_data = self.data.iloc[idx]
         target_path = get_video_path(target_data["file_name"])
-        x_path = Path(NPY_VIDEO_PATH, f"{target_path.stem}.npy")
-        return np.load(x_path), target_data["label"].item()
+        X_path = Path(NPY_VIDEO_PATH, f"{target_path.stem}.npy")
+        X = np.load(X_path)
+        y = target_data["label"].item()
+        return X, y
 
 
 def get_video_path(file_name: str) -> Path:
@@ -47,7 +48,6 @@ def get_video_path(file_name: str) -> Path:
 
 
 def create_data_loader(batch_size):
-    transform = transforms.ToTensor()
     train_loader = DataLoader(
         VideoDataset("train"),
         batch_size=batch_size,
@@ -71,13 +71,14 @@ def create_data_loader(batch_size):
 
 
 if __name__ == "__main__":
-    train_loader, _, _ = create_data_loader(2)
-    for batch_idx, (X, y) in enumerate(train_loader):
-        print(X.shape)
-        print(y)
-        break
-    # _, _, test_loader = create_data_loader(1)
-    # for batch_idx, (X, y) in enumerate(test_loader):
+    # train_loader, _, _ = create_data_loader(2)
+    # for batch_idx, X, y in enumerate(train_loader):
     #     print(X.shape)
     #     print(y)
     #     break
+    _, _, test_loader = create_data_loader(1)
+    for batch_idx, (X, y) in enumerate(test_loader):
+        print(X.shape)
+        print(X.mean())
+        print(X.std())
+        break

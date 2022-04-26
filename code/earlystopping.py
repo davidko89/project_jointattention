@@ -4,23 +4,25 @@ from pathlib import Path
 
 
 PROJECT_PATH = Path(__file__).parents[1]
-CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint/checkpoint.pt")
+CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint/")
 
 
 class EarlyStopping:
-    """주어진 patience 이후로 validation loss가 개선되지 않으면 학습을 조기 중지"""
+    """Early stops the training if validation loss doesn't improve after a given patience"""
 
-    def __init__(self, patience=7, verbose=False, delta=0, path=CHECKPOINT_PATH):
+    def __init__(self, patience=3, verbose=False, delta=0, path=CHECKPOINT_PATH):
         """
         Args:
-            patience (int): validation loss가 개선된 후 기다리는 기간
+            patience (int): How long to wait after last time validation loss improved.
                             Default: 7
-            verbose (bool): True일 경우 각 validation loss의 개선 사항 메세지 출력
+            verbose (bool): If True, prints a message for each validation loss improvement. 
                             Default: False
-            delta (float): 개선되었다고 인정되는 monitered quantity의 최소 변화
+            delta (float): Minimum change in the monitored quantity to qualify as an improvement.
                             Default: 0
-            path (str): checkpoint저장 경로
-                            Default: 'checkpoint.pt' -> path
+            path (str): Path for the checkpoint to be saved to.
+                            Default: 'checkpoint.pt'
+            trace_func (function): trace print function.
+                            Default: print 
         """
         self.patience = patience
         self.verbose = verbose
@@ -31,13 +33,13 @@ class EarlyStopping:
         self.delta = delta
         self.path = path
 
-    def __call__(self, val_loss, model):
+    def __call__(self, val_loss, model, epoch):
 
         score = -val_loss
 
         if self.best_score is None:
             self.best_score = score
-            self.save_checkpoint(val_loss, model)
+            self.save_checkpoint(val_loss, model, epoch)
         elif score < self.best_score + self.delta:
             self.counter += 1
             print(f"EarlyStopping counter: {self.counter} out of {self.patience}")
@@ -45,14 +47,16 @@ class EarlyStopping:
                 self.early_stop = True
         else:
             self.best_score = score
-            self.save_checkpoint(val_loss, model)
+            self.save_checkpoint(val_loss, model, epoch)
             self.counter = 0
 
-    def save_checkpoint(self, val_loss, model):
-        """validation loss가 감소하면 모델을 저장한다."""
+    def save_checkpoint(self, val_loss, model, epoch):
+        """Saves model when validation loss decreases."""
         if self.verbose:
             print(
                 f"Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving model ..."
             )
-        torch.save(model.state_dict(), self.path)
+        torch.save(
+            model.state_dict(), Path(self.path, f"{model.model_name}_weight_{epoch}.pt")
+        )
         self.val_loss_min = val_loss

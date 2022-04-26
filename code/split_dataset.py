@@ -32,7 +32,7 @@ for test_index, valid_index in split2.split(test_valid_set.id, test_valid_set.la
     test_set = test_valid_set.iloc[test_index]
     valid_set = test_valid_set.iloc[valid_index]
 
-# print(train_set.shape, test_set.shape, valid_set.shape)
+print(train_set.shape, test_set.shape, valid_set.shape)
 
 
 train_list = train_set["id"].to_list()

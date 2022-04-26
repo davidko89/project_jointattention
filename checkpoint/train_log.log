@@ -1,0 +1,9 @@
+Training Start. Model name: vgg
+[1/6] train_loss: 0.44690 train_accuracy: 85.35032valid_loss: 0.41065valid_accuracy: 85.71429
+Training Start. Model name: vgg
+[1/6] train_loss: 0.44326 train_accuracy: 85.35032valid_loss: 0.43368valid_accuracy: 85.71429
+[2/6] train_loss: 0.41993 train_accuracy: 85.50955valid_loss: 0.42201valid_accuracy: 85.71429
+[3/6] train_loss: 0.41457 train_accuracy: 85.56263valid_loss: 0.41327valid_accuracy: 85.71429
+[4/6] train_loss: 0.42023 train_accuracy: 85.58917valid_loss: 0.41071valid_accuracy: 85.71429
+[5/6] train_loss: 0.41574 train_accuracy: 85.60509valid_loss: 0.41060valid_accuracy: 85.71429
+[6/6] train_loss: 0.40866 train_accuracy: 85.61572valid_loss: 0.41054valid_accuracy: 85.71429

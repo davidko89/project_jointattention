@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from custom_dataset import create_data_loader
-from model import VGG16LRCN
+from model import CNNLRCN
 from pathlib import Path
 
 
@@ -73,10 +73,10 @@ def test_trained_network(model, batch_size, test_loader, criterion, device):
 
 
 def main():
-    model = VGG16LRCN()
+    model = CNNLRCN(model_name="vgg16lrcn")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.load_state_dict(torch.load(CHECKPOINT_PATH))
     model.to(device)
-    # model.load_state_dict(torch.load(CHECKPOINT_PATH))
     criterion = nn.CrossEntropyLoss()
     train_loader, valid_loader, test_loader = create_data_loader(BATCH_SIZE)
     model, test_loss = test_trained_network(
