@@ -3,23 +3,31 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from custom_dataset import create_data_loader
-from model import CNNLRCN
+from custom_datasets import get_loader
+from model import LRCN
 from earlystopping import EarlyStopping
 from pathlib import Path
-import logging
 
 
 PROJECT_PATH = Path(__file__).parents[1]
-CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint/checkpoint.pt")
+CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint")
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-file_handler = logging.FileHandler(Path(PROJECT_PATH, "checkpoint/train_log.log"))
-logger.addHandler(file_handler)
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter("%(asctime)s|%(levelname)s|%(message)s")
 
-BATCH_SIZE = 2
-N_EPOCHS = 6
+file_handler = logging.FileHandler(Path(PROJECT_PATH, "checkpoint/train_log.log"))
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
+
+
+BATCH_SIZE = 10
+N_EPOCHS = 5
 PATIENCE = 3
 
 
@@ -34,6 +42,7 @@ def train_model(
     device,
     scheduler,
 ):
+    # initialize lists to monitor train, valid loss and accuracy
     train_losses = []
     valid_losses = []
     avg_train_losses = []
@@ -64,7 +73,7 @@ def train_model(
             correct = (pred == y).sum().float()
             batch_acc = torch.round((correct / len(y) * 100).cpu())
             train_acc.append(batch_acc)
-            print(
+            logger.debug(
                 f"epoch: {epoch}; batch:{batch_idx}/{len(train_loader)}; train_loss:{loss.item():.2f}"
             )
         scheduler.step()
@@ -73,7 +82,7 @@ def train_model(
         for batch_idx, (X, y) in enumerate(valid_loader, 1):
             X = X.float().to(device)
             y = y.to(device)
-            # forward pass: 입력된 값을 모델로 전달하여 예측 출력 계산
+            # forward pass
             output = model(X)
             # calculate the loss
             loss = criterion(output, y)
@@ -84,12 +93,12 @@ def train_model(
             valid_acc.append(batch_acc)
             # record validation loss
             valid_losses.append(loss.item())
-            print(
+            logger.debug(
                 f"epoch: {epoch}; batch:{batch_idx}/{len(valid_loader)}; valid_loss:{loss.item():.2f}"
             )
 
-        # print 학습/검증 statistics
-        # epoch당 평균 loss 계산
+        # print training/validation statistics
+        # calculate average loss over an epoch
         train_loss = np.average(train_losses)
         valid_loss = np.average(valid_losses)
         epoch_train_acc = np.average(train_acc)
@@ -113,31 +122,32 @@ def train_model(
         train_losses = []
         valid_losses = []
 
-        # early_stopping는 validation loss가 감소하였는지 확인이 필요하며, 만약 감소하였을경우 현제 모델을 checkpoint로 만든다.
+        # early_stopping needs validation loss to check if it has decreased, and if it has, it will make a checkpoint of current model
         early_stopping(valid_loss, model, epoch)
 
         if early_stopping.early_stop:
             logger.info("Early stopping")
             break
 
-    # best model이 저장되어있는 last checkpoint를 로드한다.
+    # load last checkpoint with best model
     model.load_state_dict(torch.load(CHECKPOINT_PATH))
 
     return model, avg_train_losses, avg_valid_losses
 
 
 def main():
-    model = CNNLRCN(model_name="vgg16lrcn")
+    model = LRCN(model_name="vgg16lrcn")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
-    criterion = nn.CrossEntropyLoss()  # binary에서는 BCELoss 사용하는게 좀 더 낫다는?
+    criterion = (
+        nn.CrossEntropyLoss()
+    )  # consider using BCELoss since binary classiication
     optimizer = optim.SGD(model.parameters(), lr=0.01)
     scheduler = optim.lr_scheduler.StepLR(
         optimizer, step_size=2, gamma=0.1
-    )  # cLearning rate scheduler:
+    )  # learning rate scheduler:
     early_stopping = EarlyStopping(patience=PATIENCE, verbose=True)
-
-    train_loader, valid_loader, test_loader = create_data_loader(BATCH_SIZE)
+    train_loader, valid_loader, _ = get_loader(BATCH_SIZE)
     model, train_loss, valid_loss = train_model(
         model,
         N_EPOCHS,

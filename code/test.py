@@ -1,13 +1,18 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from custom_dataset import create_data_loader
-from model import CNNLRCN
+from custom_datasets import create_data_loader
+from model import LRCN
 from pathlib import Path
-
+import logging
 
 PROJECT_PATH = Path(__file__).parents[1]
-CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint/checkpoint.pt")
+CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint/vgg_weight_6.pt")
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+file_handler = logging.FileHandler(Path(PROJECT_PATH, "checkpoint/test_log.log"))
+logger.addHandler(file_handler)
 
 
 BATCH_SIZE = 2
@@ -46,11 +51,11 @@ def test_trained_network(model, batch_size, test_loader, criterion, device):
 
     # calculate and print avg test loss
     test_loss = test_loss / len(test_loader.dataset)
-    print("Test Loss: {:.6f}\n".format(test_loss))
+    logger.info("Test Loss: {:.6f}\n".format(test_loss))
 
     for i in range(2):
         if class_total[i] > 0:
-            print(
+            logger.info(
                 "Test Accuracy of %5s: %2d%% (%2d/%2d)"
                 % (
                     str(i),
@@ -60,9 +65,11 @@ def test_trained_network(model, batch_size, test_loader, criterion, device):
                 )
             )
         else:
-            print("Test Accuracy of %5s: N/A (no training examples)" % (class_total[i]))
+            logger.info(
+                "Test Accuracy of %5s: N/A (no training examples)" % (class_total[i])
+            )
 
-    print(
+    logger.info(
         "\nTest Accuracy (Overall): %2d%% (%2d/%2d)"
         % (
             100.0 * np.sum(class_correct) / np.sum(class_total),
@@ -73,13 +80,13 @@ def test_trained_network(model, batch_size, test_loader, criterion, device):
 
 
 def main():
-    model = CNNLRCN(model_name="vgg16lrcn")
+    model = LRCN(model_name="vgg16lrcn")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.load_state_dict(torch.load(CHECKPOINT_PATH))
     model.to(device)
     criterion = nn.CrossEntropyLoss()
     train_loader, valid_loader, test_loader = create_data_loader(BATCH_SIZE)
-    model, test_loss = test_trained_network(
+    test_trained_network(
         model,
         BATCH_SIZE,
         test_loader,

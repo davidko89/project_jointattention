@@ -1,24 +1,11 @@
 from pathlib import Path
 import numpy as np
-import pandas as pd
 import cv2
 import skimage.transform
-from tqdm import tqdm
 
 PROJECT_PATH = Path(__file__).parents[1]
-NPY_VIDEO_PATH = Path(PROJECT_PATH, "data/processed_videos/IJA")
-RESIZED_HEIGHT, RESIZED_WIDTH = 224, 224
-RGB = 3
-# task_name = {'IJA', 'RJA_low', 'RJA_high_BL', 'RJA_high_BR', 'RJA_high_Lt', 'RJA_high_Rt'}
-
-
-def read_dataset(csv_file: str) -> pd.DataFrame:
-    dataset_path = Path(PROJECT_PATH, "data", csv_file)
-    return pd.read_csv(dataset_path)[["file_name", "label"]]
-
-
-def get_video_path(task_name: str, file_name) -> Path:
-    return Path(PROJECT_PATH, "data/assembly", task_name, file_name)
+PROC_DATA_PATH = Path(PROJECT_PATH, "data/processed_videos")
+PROC_IJA_DATA_PATH = Path(PROJECT_PATH, "data/processed_videos/IJA")
 
 
 def read_video(video_path: Path) -> np.ndarray:
@@ -50,23 +37,12 @@ def resize_video(frame_arr):
     return resized_frame
 
 
-def save_numpy_arr(arr: np.ndarray, file_name: str):
-    np.save(Path(NPY_VIDEO_PATH, file_name), arr)
-
-
-def process_by_file(task_name, file_name):
-    target_path = get_video_path(task_name, file_name)
-    video_arr = read_video(target_path)
-    save_numpy_arr(video_arr, f"{file_name.split('.')[0]}.npy")
-
-
 def main():
-    data: pd.DataFrame = read_dataset("ija_videofile_with_dx.csv").dropna()
-
-    task_name = "IJA"
-
-    for file_name in tqdm(data.file_name):
-        process_by_file(file_name, task_name)
+    video_path = Path(PROJECT_PATH, "data/assembly/IJA", "B015_IJA_2.mp4")
+    a = read_video(video_path)
+    
+    print(a.mean(axis=(0, 2, 3)))
+    print(a.std(axis=(0, 2, 3)))
 
 
 if __name__ == "__main__":

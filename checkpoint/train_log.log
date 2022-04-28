@@ -1,9 +1,329 @@
-Training Start. Model name: vgg
-[1/6] train_loss: 0.44690 train_accuracy: 85.35032valid_loss: 0.41065valid_accuracy: 85.71429
-Training Start. Model name: vgg
+Training Start. Model name: vgg16lrcn
 [1/6] train_loss: 0.44326 train_accuracy: 85.35032valid_loss: 0.43368valid_accuracy: 85.71429
 [2/6] train_loss: 0.41993 train_accuracy: 85.50955valid_loss: 0.42201valid_accuracy: 85.71429
 [3/6] train_loss: 0.41457 train_accuracy: 85.56263valid_loss: 0.41327valid_accuracy: 85.71429
 [4/6] train_loss: 0.42023 train_accuracy: 85.58917valid_loss: 0.41071valid_accuracy: 85.71429
 [5/6] train_loss: 0.41574 train_accuracy: 85.60509valid_loss: 0.41060valid_accuracy: 85.71429
 [6/6] train_loss: 0.40866 train_accuracy: 85.61572valid_loss: 0.41054valid_accuracy: 85.71429
+Training Start. Model name: vgg16lrcn
+Training Start. Model name: vgg16lrcn
+Training Start. Model name: vgg16lrcn
+Training Start. Model name: vgg16lrcn
+epoch: 1; batch:1/32; train_loss:0.71
+epoch: 1; batch:2/32; train_loss:0.69
+epoch: 1; batch:3/32; train_loss:0.70
+epoch: 1; batch:4/32; train_loss:0.70
+epoch: 1; batch:5/32; train_loss:0.72
+epoch: 1; batch:6/32; train_loss:0.65
+epoch: 1; batch:7/32; train_loss:0.71
+epoch: 1; batch:8/32; train_loss:0.71
+epoch: 1; batch:9/32; train_loss:0.71
+epoch: 1; batch:10/32; train_loss:0.66
+epoch: 1; batch:11/32; train_loss:0.71
+epoch: 1; batch:12/32; train_loss:0.69
+epoch: 1; batch:13/32; train_loss:0.69
+epoch: 1; batch:14/32; train_loss:0.70
+epoch: 1; batch:15/32; train_loss:0.69
+epoch: 1; batch:16/32; train_loss:0.71
+epoch: 1; batch:17/32; train_loss:0.74
+epoch: 1; batch:18/32; train_loss:0.69
+epoch: 1; batch:19/32; train_loss:0.72
+epoch: 1; batch:20/32; train_loss:0.69
+epoch: 1; batch:21/32; train_loss:0.72
+epoch: 1; batch:22/32; train_loss:0.69
+epoch: 1; batch:23/32; train_loss:0.67
+epoch: 1; batch:24/32; train_loss:0.66
+epoch: 1; batch:25/32; train_loss:0.69
+epoch: 1; batch:26/32; train_loss:0.72
+epoch: 1; batch:27/32; train_loss:0.65
+epoch: 1; batch:28/32; train_loss:0.76
+epoch: 1; batch:29/32; train_loss:0.68
+epoch: 1; batch:30/32; train_loss:0.75
+epoch: 1; batch:31/32; train_loss:0.70
+epoch: 1; batch:32/32; train_loss:0.78
+epoch: 1; batch:1/13; valid_loss:0.69
+epoch: 1; batch:2/13; valid_loss:0.69
+epoch: 1; batch:3/13; valid_loss:0.69
+epoch: 1; batch:4/13; valid_loss:0.69
+epoch: 1; batch:5/13; valid_loss:0.69
+epoch: 1; batch:6/13; valid_loss:0.69
+epoch: 1; batch:7/13; valid_loss:0.69
+epoch: 1; batch:8/13; valid_loss:0.69
+epoch: 1; batch:9/13; valid_loss:0.69
+epoch: 1; batch:10/13; valid_loss:0.69
+epoch: 1; batch:11/13; valid_loss:0.69
+epoch: 1; batch:12/13; valid_loss:0.69
+epoch: 1; batch:13/13; valid_loss:0.69
+[1/5] train_loss: 0.70187 train_accuracy: 47.18750valid_loss: 0.69272valid_accuracy: 83.07692
+epoch: 2; batch:1/32; train_loss:0.69
+epoch: 2; batch:2/32; train_loss:0.69
+epoch: 2; batch:3/32; train_loss:0.72
+epoch: 2; batch:4/32; train_loss:0.68
+epoch: 2; batch:5/32; train_loss:0.69
+epoch: 2; batch:6/32; train_loss:0.71
+epoch: 2; batch:7/32; train_loss:0.73
+epoch: 2; batch:8/32; train_loss:0.69
+epoch: 2; batch:9/32; train_loss:0.70
+epoch: 2; batch:10/32; train_loss:0.69
+epoch: 2; batch:11/32; train_loss:0.68
+epoch: 2; batch:12/32; train_loss:0.69
+epoch: 2; batch:13/32; train_loss:0.69
+epoch: 2; batch:14/32; train_loss:0.73
+epoch: 2; batch:15/32; train_loss:0.68
+epoch: 2; batch:16/32; train_loss:0.64
+epoch: 2; batch:17/32; train_loss:0.72
+epoch: 2; batch:18/32; train_loss:0.71
+epoch: 2; batch:19/32; train_loss:0.70
+epoch: 2; batch:20/32; train_loss:0.66
+epoch: 2; batch:21/32; train_loss:0.69
+epoch: 2; batch:22/32; train_loss:0.68
+epoch: 2; batch:23/32; train_loss:0.68
+epoch: 2; batch:24/32; train_loss:0.69
+epoch: 2; batch:25/32; train_loss:0.65
+epoch: 2; batch:26/32; train_loss:0.71
+epoch: 2; batch:27/32; train_loss:0.70
+epoch: 2; batch:28/32; train_loss:0.75
+epoch: 2; batch:29/32; train_loss:0.66
+epoch: 2; batch:30/32; train_loss:0.70
+epoch: 2; batch:31/32; train_loss:0.71
+epoch: 2; batch:32/32; train_loss:0.74
+epoch: 2; batch:1/13; valid_loss:0.64
+epoch: 2; batch:2/13; valid_loss:0.64
+epoch: 2; batch:3/13; valid_loss:0.64
+epoch: 2; batch:4/13; valid_loss:0.64
+epoch: 2; batch:5/13; valid_loss:0.64
+epoch: 2; batch:6/13; valid_loss:0.64
+epoch: 2; batch:7/13; valid_loss:0.64
+epoch: 2; batch:8/13; valid_loss:0.64
+epoch: 2; batch:9/13; valid_loss:0.64
+epoch: 2; batch:10/13; valid_loss:0.64
+epoch: 2; batch:11/13; valid_loss:0.66
+epoch: 2; batch:12/13; valid_loss:0.75
+epoch: 2; batch:13/13; valid_loss:0.75
+[2/5] train_loss: 0.69522 train_accuracy: 49.26562valid_loss: 0.65880valid_accuracy: 83.07692
+epoch: 3; batch:1/32; train_loss:0.70
+epoch: 3; batch:2/32; train_loss:0.69
+epoch: 3; batch:3/32; train_loss:0.68
+epoch: 3; batch:4/32; train_loss:0.73
+epoch: 3; batch:5/32; train_loss:0.70
+epoch: 3; batch:6/32; train_loss:0.68
+epoch: 3; batch:7/32; train_loss:0.68
+epoch: 3; batch:8/32; train_loss:0.69
+epoch: 3; batch:9/32; train_loss:0.68
+epoch: 3; batch:10/32; train_loss:0.66
+epoch: 3; batch:11/32; train_loss:0.67
+epoch: 3; batch:12/32; train_loss:0.74
+epoch: 3; batch:13/32; train_loss:0.69
+epoch: 3; batch:14/32; train_loss:0.73
+epoch: 3; batch:15/32; train_loss:0.67
+epoch: 3; batch:16/32; train_loss:0.69
+epoch: 3; batch:17/32; train_loss:0.69
+epoch: 3; batch:18/32; train_loss:0.69
+epoch: 3; batch:19/32; train_loss:0.73
+epoch: 3; batch:20/32; train_loss:0.71
+epoch: 3; batch:21/32; train_loss:0.73
+epoch: 3; batch:22/32; train_loss:0.69
+epoch: 3; batch:23/32; train_loss:0.68
+epoch: 3; batch:24/32; train_loss:0.70
+epoch: 3; batch:25/32; train_loss:0.72
+epoch: 3; batch:26/32; train_loss:0.70
+epoch: 3; batch:27/32; train_loss:0.69
+epoch: 3; batch:28/32; train_loss:0.70
+epoch: 3; batch:29/32; train_loss:0.67
+epoch: 3; batch:30/32; train_loss:0.70
+epoch: 3; batch:31/32; train_loss:0.74
+epoch: 3; batch:32/32; train_loss:0.68
+epoch: 3; batch:1/13; valid_loss:0.66
+epoch: 3; batch:2/13; valid_loss:0.66
+epoch: 3; batch:3/13; valid_loss:0.66
+epoch: 3; batch:4/13; valid_loss:0.66
+epoch: 3; batch:5/13; valid_loss:0.66
+epoch: 3; batch:6/13; valid_loss:0.66
+epoch: 3; batch:7/13; valid_loss:0.66
+epoch: 3; batch:8/13; valid_loss:0.66
+epoch: 3; batch:9/13; valid_loss:0.66
+epoch: 3; batch:10/13; valid_loss:0.66
+epoch: 3; batch:11/13; valid_loss:0.67
+epoch: 3; batch:12/13; valid_loss:0.73
+epoch: 3; batch:13/13; valid_loss:0.73
+[3/5] train_loss: 0.69586 train_accuracy: 49.58333valid_loss: 0.66848valid_accuracy: 83.07692
+epoch: 4; batch:1/32; train_loss:0.66
+epoch: 4; batch:2/32; train_loss:0.67
+epoch: 4; batch:3/32; train_loss:0.71
+epoch: 4; batch:4/32; train_loss:0.72
+epoch: 4; batch:5/32; train_loss:0.73
+epoch: 4; batch:6/32; train_loss:0.70
+epoch: 4; batch:7/32; train_loss:0.71
+epoch: 4; batch:8/32; train_loss:0.68
+epoch: 4; batch:9/32; train_loss:0.73
+epoch: 4; batch:10/32; train_loss:0.69
+epoch: 4; batch:11/32; train_loss:0.68
+epoch: 4; batch:12/32; train_loss:0.67
+epoch: 4; batch:13/32; train_loss:0.72
+epoch: 4; batch:14/32; train_loss:0.69
+epoch: 4; batch:15/32; train_loss:0.69
+epoch: 4; batch:16/32; train_loss:0.69
+epoch: 4; batch:17/32; train_loss:0.72
+epoch: 4; batch:18/32; train_loss:0.68
+epoch: 4; batch:19/32; train_loss:0.71
+epoch: 4; batch:20/32; train_loss:0.70
+epoch: 4; batch:21/32; train_loss:0.73
+epoch: 4; batch:22/32; train_loss:0.71
+epoch: 4; batch:23/32; train_loss:0.68
+epoch: 4; batch:24/32; train_loss:0.70
+epoch: 4; batch:25/32; train_loss:0.69
+epoch: 4; batch:26/32; train_loss:0.72
+epoch: 4; batch:27/32; train_loss:0.70
+epoch: 4; batch:28/32; train_loss:0.69
+epoch: 4; batch:29/32; train_loss:0.70
+epoch: 4; batch:30/32; train_loss:0.69
+epoch: 4; batch:31/32; train_loss:0.69
+epoch: 4; batch:32/32; train_loss:0.68
+epoch: 4; batch:1/13; valid_loss:0.68
+epoch: 4; batch:2/13; valid_loss:0.68
+epoch: 4; batch:3/13; valid_loss:0.68
+epoch: 4; batch:4/13; valid_loss:0.68
+epoch: 4; batch:5/13; valid_loss:0.68
+epoch: 4; batch:6/13; valid_loss:0.68
+epoch: 4; batch:7/13; valid_loss:0.68
+epoch: 4; batch:8/13; valid_loss:0.68
+epoch: 4; batch:9/13; valid_loss:0.68
+epoch: 4; batch:10/13; valid_loss:0.68
+epoch: 4; batch:11/13; valid_loss:0.68
+epoch: 4; batch:12/13; valid_loss:0.71
+epoch: 4; batch:13/13; valid_loss:0.71
+[4/5] train_loss: 0.69790 train_accuracy: 47.94531valid_loss: 0.68178valid_accuracy: 83.07692
+epoch: 5; batch:1/32; train_loss:0.67
+epoch: 5; batch:2/32; train_loss:0.71
+epoch: 5; batch:3/32; train_loss:0.67
+epoch: 5; batch:4/32; train_loss:0.70
+epoch: 5; batch:5/32; train_loss:0.70
+epoch: 5; batch:6/32; train_loss:0.70
+epoch: 5; batch:7/32; train_loss:0.68
+epoch: 5; batch:8/32; train_loss:0.68
+epoch: 5; batch:9/32; train_loss:0.71
+epoch: 5; batch:10/32; train_loss:0.68
+epoch: 5; batch:11/32; train_loss:0.67
+epoch: 5; batch:12/32; train_loss:0.70
+epoch: 5; batch:13/32; train_loss:0.70
+epoch: 5; batch:14/32; train_loss:0.68
+epoch: 5; batch:15/32; train_loss:0.69
+epoch: 5; batch:16/32; train_loss:0.68
+epoch: 5; batch:17/32; train_loss:0.70
+epoch: 5; batch:18/32; train_loss:0.67
+epoch: 5; batch:19/32; train_loss:0.70
+Training Start. Model name: vgg16lrcn
+epoch: 1; batch:1/32; train_loss:0.72
+epoch: 1; batch:2/32; train_loss:0.70
+epoch: 1; batch:3/32; train_loss:0.69
+epoch: 1; batch:4/32; train_loss:0.70
+epoch: 1; batch:5/32; train_loss:0.72
+epoch: 1; batch:6/32; train_loss:0.69
+epoch: 1; batch:7/32; train_loss:0.72
+epoch: 1; batch:8/32; train_loss:0.67
+epoch: 1; batch:9/32; train_loss:0.69
+epoch: 1; batch:10/32; train_loss:0.69
+epoch: 1; batch:11/32; train_loss:0.69
+epoch: 1; batch:12/32; train_loss:0.68
+epoch: 1; batch:13/32; train_loss:0.69
+2022-04-28 16:02:36,607|INFO|message
+2022-04-28 16:03:00,780|INFO|Training Start. Model name: vgg16lrcn
+2022-04-28 16:03:01,171|DEBUG|epoch: 1; batch:1/32; train_loss:0.66
+2022-04-28 16:03:01,589|DEBUG|epoch: 1; batch:2/32; train_loss:0.61
+2022-04-28 16:03:02,008|DEBUG|epoch: 1; batch:3/32; train_loss:0.67
+2022-04-28 16:03:02,424|DEBUG|epoch: 1; batch:4/32; train_loss:0.65
+2022-04-28 16:03:02,842|DEBUG|epoch: 1; batch:5/32; train_loss:0.74
+2022-04-28 16:03:03,266|DEBUG|epoch: 1; batch:6/32; train_loss:0.71
+2022-04-28 16:03:03,685|DEBUG|epoch: 1; batch:7/32; train_loss:0.67
+2022-04-28 16:03:04,100|DEBUG|epoch: 1; batch:8/32; train_loss:0.70
+2022-04-28 16:03:04,538|DEBUG|epoch: 1; batch:9/32; train_loss:0.79
+2022-04-28 16:03:04,967|DEBUG|epoch: 1; batch:10/32; train_loss:0.63
+2022-04-28 16:03:05,395|DEBUG|epoch: 1; batch:11/32; train_loss:0.75
+2022-04-28 16:03:05,818|DEBUG|epoch: 1; batch:12/32; train_loss:0.70
+2022-04-28 16:03:06,250|DEBUG|epoch: 1; batch:13/32; train_loss:0.74
+2022-04-28 16:03:06,674|DEBUG|epoch: 1; batch:14/32; train_loss:0.67
+2022-04-28 16:03:07,101|DEBUG|epoch: 1; batch:15/32; train_loss:0.69
+2022-04-28 16:03:07,528|DEBUG|epoch: 1; batch:16/32; train_loss:0.67
+2022-04-28 16:03:07,950|DEBUG|epoch: 1; batch:17/32; train_loss:0.66
+2022-04-28 16:03:08,379|DEBUG|epoch: 1; batch:18/32; train_loss:0.65
+2022-04-28 16:03:08,806|DEBUG|epoch: 1; batch:19/32; train_loss:0.73
+2022-04-28 16:03:09,231|DEBUG|epoch: 1; batch:20/32; train_loss:0.73
+2022-04-28 16:03:09,653|DEBUG|epoch: 1; batch:21/32; train_loss:0.72
+2022-04-28 16:03:10,122|DEBUG|epoch: 1; batch:22/32; train_loss:0.78
+2022-04-28 16:03:10,645|DEBUG|epoch: 1; batch:23/32; train_loss:0.70
+2022-04-28 16:03:11,077|DEBUG|epoch: 1; batch:24/32; train_loss:0.69
+2022-04-28 16:03:11,513|DEBUG|epoch: 1; batch:25/32; train_loss:0.72
+2022-04-28 16:03:11,952|DEBUG|epoch: 1; batch:26/32; train_loss:0.71
+2022-04-28 16:03:12,425|DEBUG|epoch: 1; batch:27/32; train_loss:0.68
+2022-04-28 16:03:12,846|DEBUG|epoch: 1; batch:28/32; train_loss:0.70
+2022-04-28 16:03:13,275|DEBUG|epoch: 1; batch:29/32; train_loss:0.69
+2022-04-28 16:03:13,695|DEBUG|epoch: 1; batch:30/32; train_loss:0.67
+2022-04-28 16:03:14,120|DEBUG|epoch: 1; batch:31/32; train_loss:0.68
+2022-04-28 16:03:14,274|DEBUG|epoch: 1; batch:32/32; train_loss:0.67
+2022-04-28 16:03:14,655|DEBUG|epoch: 1; batch:1/13; valid_loss:0.76
+2022-04-28 16:03:15,047|DEBUG|epoch: 1; batch:2/13; valid_loss:0.76
+2022-04-28 16:03:15,446|DEBUG|epoch: 1; batch:3/13; valid_loss:0.76
+2022-04-28 16:03:15,853|DEBUG|epoch: 1; batch:4/13; valid_loss:0.76
+2022-04-28 16:03:16,252|DEBUG|epoch: 1; batch:5/13; valid_loss:0.76
+2022-04-28 16:03:16,654|DEBUG|epoch: 1; batch:6/13; valid_loss:0.76
+2022-04-28 16:03:17,055|DEBUG|epoch: 1; batch:7/13; valid_loss:0.76
+2022-04-28 16:03:17,457|DEBUG|epoch: 1; batch:8/13; valid_loss:0.76
+2022-04-28 16:03:17,859|DEBUG|epoch: 1; batch:9/13; valid_loss:0.76
+2022-04-28 16:03:18,259|DEBUG|epoch: 1; batch:10/13; valid_loss:0.76
+2022-04-28 16:03:18,654|DEBUG|epoch: 1; batch:11/13; valid_loss:0.73
+2022-04-28 16:03:19,040|DEBUG|epoch: 1; batch:12/13; valid_loss:0.63
+2022-04-28 16:03:19,289|DEBUG|epoch: 1; batch:13/13; valid_loss:0.63
+2022-04-28 16:03:19,308|INFO|[1/5] train_loss: 0.69424 train_accuracy: 53.65625valid_loss: 0.73812valid_accuracy: 16.92308
+2022-04-28 16:03:19,868|DEBUG|epoch: 2; batch:1/32; train_loss:0.68
+2022-04-28 16:03:20,288|DEBUG|epoch: 2; batch:2/32; train_loss:0.67
+2022-04-28 16:03:20,714|DEBUG|epoch: 2; batch:3/32; train_loss:0.75
+2022-04-28 16:03:21,133|DEBUG|epoch: 2; batch:4/32; train_loss:0.66
+2022-04-28 16:03:21,623|DEBUG|epoch: 2; batch:5/32; train_loss:0.73
+2022-04-28 16:03:22,046|DEBUG|epoch: 2; batch:6/32; train_loss:0.67
+2022-04-28 16:03:22,463|DEBUG|epoch: 2; batch:7/32; train_loss:0.70
+2022-04-28 16:03:22,884|DEBUG|epoch: 2; batch:8/32; train_loss:0.74
+2022-04-28 16:03:23,303|DEBUG|epoch: 2; batch:9/32; train_loss:0.67
+2022-04-28 16:03:23,716|DEBUG|epoch: 2; batch:10/32; train_loss:0.71
+2022-04-28 16:03:24,134|DEBUG|epoch: 2; batch:11/32; train_loss:0.68
+2022-04-28 16:03:24,551|DEBUG|epoch: 2; batch:12/32; train_loss:0.69
+2022-04-28 16:03:24,967|DEBUG|epoch: 2; batch:13/32; train_loss:0.71
+2022-04-28 16:03:25,384|DEBUG|epoch: 2; batch:14/32; train_loss:0.69
+2022-04-28 16:03:25,812|DEBUG|epoch: 2; batch:15/32; train_loss:0.70
+2022-04-28 16:03:26,221|DEBUG|epoch: 2; batch:16/32; train_loss:0.68
+2022-04-28 16:03:26,634|DEBUG|epoch: 2; batch:17/32; train_loss:0.69
+2022-04-28 16:03:27,054|DEBUG|epoch: 2; batch:18/32; train_loss:0.66
+2022-04-28 16:03:27,472|DEBUG|epoch: 2; batch:19/32; train_loss:0.66
+2022-04-28 16:03:27,890|DEBUG|epoch: 2; batch:20/32; train_loss:0.71
+2022-04-28 16:03:28,302|DEBUG|epoch: 2; batch:21/32; train_loss:0.69
+2022-04-28 16:03:28,722|DEBUG|epoch: 2; batch:22/32; train_loss:0.69
+2022-04-28 16:03:29,155|DEBUG|epoch: 2; batch:23/32; train_loss:0.67
+2022-04-28 16:03:29,567|DEBUG|epoch: 2; batch:24/32; train_loss:0.71
+2022-04-28 16:03:29,979|DEBUG|epoch: 2; batch:25/32; train_loss:0.69
+2022-04-28 16:03:30,396|DEBUG|epoch: 2; batch:26/32; train_loss:0.70
+2022-04-28 16:03:30,810|DEBUG|epoch: 2; batch:27/32; train_loss:0.69
+2022-04-28 16:03:31,224|DEBUG|epoch: 2; batch:28/32; train_loss:0.69
+2022-04-28 16:03:31,638|DEBUG|epoch: 2; batch:29/32; train_loss:0.67
+2022-04-28 16:03:32,057|DEBUG|epoch: 2; batch:30/32; train_loss:0.77
+2022-04-28 16:03:32,472|DEBUG|epoch: 2; batch:31/32; train_loss:0.68
+2022-04-28 16:03:32,626|DEBUG|epoch: 2; batch:32/32; train_loss:0.67
+2022-04-28 16:03:33,009|DEBUG|epoch: 2; batch:1/13; valid_loss:0.81
+2022-04-28 16:03:33,403|DEBUG|epoch: 2; batch:2/13; valid_loss:0.81
+2022-04-28 16:03:33,802|DEBUG|epoch: 2; batch:3/13; valid_loss:0.81
+2022-04-28 16:03:34,206|DEBUG|epoch: 2; batch:4/13; valid_loss:0.81
+2022-04-28 16:03:34,691|DEBUG|epoch: 2; batch:5/13; valid_loss:0.81
+2022-04-28 16:03:35,101|DEBUG|epoch: 2; batch:6/13; valid_loss:0.81
+2022-04-28 16:03:35,501|DEBUG|epoch: 2; batch:7/13; valid_loss:0.81
+2022-04-28 16:03:35,903|DEBUG|epoch: 2; batch:8/13; valid_loss:0.81
+2022-04-28 16:03:36,304|DEBUG|epoch: 2; batch:9/13; valid_loss:0.81
+2022-04-28 16:03:36,703|DEBUG|epoch: 2; batch:10/13; valid_loss:0.81
+2022-04-28 16:03:37,105|DEBUG|epoch: 2; batch:11/13; valid_loss:0.77
+2022-04-28 16:03:37,500|DEBUG|epoch: 2; batch:12/13; valid_loss:0.59
+2022-04-28 16:03:37,754|DEBUG|epoch: 2; batch:13/13; valid_loss:0.59
+2022-04-28 16:03:37,775|INFO|[2/5] train_loss: 0.69235 train_accuracy: 54.64062valid_loss: 0.77258valid_accuracy: 16.92308
+2022-04-28 16:03:38,175|DEBUG|epoch: 3; batch:1/32; train_loss:0.68
+2022-04-28 16:03:38,596|DEBUG|epoch: 3; batch:2/32; train_loss:0.69
+2022-04-28 16:03:39,018|DEBUG|epoch: 3; batch:3/32; train_loss:0.75
+2022-04-28 16:03:39,432|DEBUG|epoch: 3; batch:4/32; train_loss:0.71
+2022-04-28 16:03:39,848|DEBUG|epoch: 3; batch:5/32; train_loss:0.70
+2022-04-28 16:03:40,265|DEBUG|epoch: 3; batch:6/32; train_loss:0.66
+2022-04-28 16:03:59,985|INFO|Training Start. Model name: vgg16lrcn
