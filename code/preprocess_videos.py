@@ -1,13 +1,12 @@
-from sqlite3 import OperationalError
-import torch
-import cv2
-import numpy as np
-from PIL import Image, ImageOps
-from torchvision import transforms
-import pandas as pd
 import matplotlib.pyplot as plt
+import cv2
+import pandas as pd
+import numpy as np
+import torch
+from torchvision import transforms
+from sqlite3 import OperationalError
 from pathlib import Path
-from tqdm import tqdm
+
 
 SPLIT_CSV_FILE = "ija_videofile_with_dx.csv"
 PROJECT_PATH = Path(__file__).parents[1]
@@ -107,6 +106,7 @@ def main():
     output_files = [p.stem for p in output_path.glob("*.npy") if p]
 
     target_files = [f for f in data.file_name if f not in output_files]
+
 
     with concurrent.futures.ProcessPoolExecutor(max_workers=30) as executor:
         futures = [

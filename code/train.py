@@ -26,7 +26,7 @@ logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
 
 
-BATCH_SIZE = 10
+BATCH_SIZE = 16
 N_EPOCHS = 5
 PATIENCE = 3
 
@@ -137,7 +137,7 @@ def train_model(
 
 
 def main():
-    model = LRCN(dropout=0.4, seq_len=300, num_lstm_layers=1, lstm_hidden_dm=128)
+    model = LRCN(dropout=0.4, seq_len=300, num_lstm_layers=1, lstm_hidden_dim=128)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     criterion = (

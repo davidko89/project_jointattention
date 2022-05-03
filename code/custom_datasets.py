@@ -6,9 +6,11 @@ import pandas as pd
 from pathlib import Path
 
 
-MNT_PATH = "/mnt/2021_NIA_data/jointattention/"
-CNN_VIDEO_PATH = Path(MNT_PATH, "processed_videos/CNN_IJA")
 SPLIT_CSV_FILE = "ija_diagnosis_sets.csv"
+PROJECT_PATH = Path(__file__).parents[1]
+DATA_PATH = Path(PROJECT_PATH, "data")
+PROC_IJA_PATH = Path(DATA_PATH, "proc_data/proc_ija")
+# CNN_VIDEO_PATH = Path(DATA_PATH, "proc_data/cnn_ija")
 
 
 class VideoDataset(Dataset):
@@ -17,7 +19,7 @@ class VideoDataset(Dataset):
         Args:
             group: str ("train", "valid", "test")
         """
-        data = pd.read_csv(Path(MNT_PATH, split_csv_file))
+        data = pd.read_csv(Path(DATA_PATH, split_csv_file))
 
         if group == "train":
             self.data = data.loc[data.train].reset_index(drop=True)
@@ -36,14 +38,14 @@ class VideoDataset(Dataset):
     def __getitem__(self, idx):
         target_data = self.data.iloc[idx]
         target_path = get_video_path(target_data["file_name"])
-        X_path = Path(CNN_VIDEO_PATH, f"{target_path.stem}.npy")
+        X_path = Path(PROC_IJA_PATH, f"{target_path.stem}.npy")
         X = np.load(X_path)
         y = target_data["label"].item()
         return X, y
 
 
 def get_video_path(file_name: str) -> Path:
-    return Path(CNN_VIDEO_PATH, file_name)
+    return Path(PROC_IJA_PATH, file_name)
 
 
 def get_loader(batch_size):
@@ -76,7 +78,7 @@ def get_loader(batch_size):
 
 
 if __name__ == "__main__":
-    train_loader, _, _ = get_loader(batch_size=10)
+    train_loader, _, _ = get_loader(batch_size=16)
 
     num_TD = 0
     num_ASD = 0

@@ -15,7 +15,7 @@ file_handler = logging.FileHandler(Path(PROJECT_PATH, "checkpoint/test_log.log")
 logger.addHandler(file_handler)
 
 
-BATCH_SIZE = 10
+BATCH_SIZE = 16
 
 
 def test_trained_network(model, batch_size, test_loader, criterion, device):
