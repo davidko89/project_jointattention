@@ -1,14 +1,15 @@
 #%%
 from pathlib import Path
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.model_selection import StratifiedShuffleSplit, train_test_split
 
-PROJECT_PATH = Path(__file__).parents[1]
 
-dataset = pd.read_csv(Path(PROJECT_PATH, "data/ija_video_file_with_dx.csv")).dropna()
+MNT_PATH = "/mnt/2021_NIA_data/jointattention/"
+SPLIT_CSV_FILE = "ija_videofile_with_dx.csv"
+
+
+dataset = pd.read_csv(Path(MNT_PATH, SPLIT_CSV_FILE)).dropna()
 print(dataset)
-
 
 dataset.columns = ["file_name", "label"]
 
@@ -54,4 +55,4 @@ print(dataset)
 
 
 #%%
-dataset.to_csv(Path(PROJECT_PATH, "data", "ija_diagnosis_sets.csv"), index=False)
+dataset.to_csv(Path(MNT_PATH, "ija_diagnosis_sets.csv"), index=False)

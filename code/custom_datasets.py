@@ -6,9 +6,8 @@ import pandas as pd
 from pathlib import Path
 
 
-PROJECT_PATH = Path(__file__).parents[1]
-DATA_PATH = Path(PROJECT_PATH, "data")
-CNN_VIDEO_PATH = Path(PROJECT_PATH, "data/processed_videos/IJA")
+MNT_PATH = "/mnt/2021_NIA_data/jointattention/"
+CNN_VIDEO_PATH = Path(MNT_PATH, "processed_videos/CNN_IJA")
 SPLIT_CSV_FILE = "ija_diagnosis_sets.csv"
 
 
@@ -18,7 +17,7 @@ class VideoDataset(Dataset):
         Args:
             group: str ("train", "valid", "test")
         """
-        data = pd.read_csv(Path(DATA_PATH, split_csv_file))
+        data = pd.read_csv(Path(MNT_PATH, split_csv_file))
 
         if group == "train":
             self.data = data.loc[data.train].reset_index(drop=True)

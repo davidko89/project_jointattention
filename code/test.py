@@ -7,7 +7,7 @@ from pathlib import Path
 import logging
 
 PROJECT_PATH = Path(__file__).parents[1]
-CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint/vgg_weight_6.pt")
+CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint/_.pt")  ##_specify
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -15,7 +15,7 @@ file_handler = logging.FileHandler(Path(PROJECT_PATH, "checkpoint/test_log.log")
 logger.addHandler(file_handler)
 
 
-BATCH_SIZE = 2
+BATCH_SIZE = 10
 
 
 def test_trained_network(model, batch_size, test_loader, criterion, device):

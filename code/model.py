@@ -3,21 +3,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-
-DROPOUT = 0.4
-SEQ_LEN = 300
-NUM_LSTM_LAYERS = 1
-LSTM_HIDDEN_DIM = 128
-
-
 class LRCN(nn.Module):
-    def __init__(self, model_name):
+    def __init__(self, dropout, seq_len, num_lstm_layers, lstm_hidden_dim):
         super(LRCN, self).__init__()
-        self.lstm_hidden_dim = LSTM_HIDDEN_DIM
-        self.num_lstm_layers = NUM_LSTM_LAYERS
-        self.seq_len = SEQ_LEN
-        self.model_name = model_name
-        self.drop1 = nn.Dropout(DROPOUT)
+        self.lstm_hidden_dim = lstm_hidden_dim
+        self.num_lstm_layers = num_lstm_layers
+        self.seq_len = seq_len
+        self.drop1 = nn.Dropout(dropout)
         self.lstm1 = nn.LSTM(
             25088, self.lstm_hidden_dim, self.num_lstm_layers, batch_first=True
         )  # input features = 512 * 7 * 7
@@ -45,7 +37,7 @@ if __name__ == "__main__":
     # print(X.shape)
     # print(X.view(-1).shape)
 
-    model = LRCN(model_name="vgg16lrcn")
+    model = LRCN()
     model.to("cuda")
     X = torch.rand(size=(100, 300, 512, 7, 7))
     X = X.to("cuda")

@@ -49,7 +49,7 @@ def train_model(
     avg_valid_losses = []
     train_acc = []
     valid_acc = []
-    logger.info(f"Training Start. Model name: {model.model_name}")
+    logger.info(f"Training Start.")
 
     for epoch in range(1, n_epochs + 1):
         # train the model#
@@ -77,6 +77,7 @@ def train_model(
                 f"epoch: {epoch}; batch:{batch_idx}/{len(train_loader)}; train_loss:{loss.item():.2f}"
             )
         scheduler.step()
+
         # validate the model#
         model.eval()  # prep model for evaluation
         for batch_idx, (X, y) in enumerate(valid_loader, 1):
@@ -136,7 +137,7 @@ def train_model(
 
 
 def main():
-    model = LRCN(model_name="vgg16lrcn")
+    model = LRCN(dropout=0.4, seq_len=300, num_lstm_layers=1, lstm_hidden_dm=128)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     criterion = (
