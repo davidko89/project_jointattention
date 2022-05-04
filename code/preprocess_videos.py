@@ -6,6 +6,7 @@ import torch
 from torchvision import transforms
 from sqlite3 import OperationalError
 from pathlib import Path
+import glob
 
 
 SPLIT_CSV_FILE = "ija_videofile_with_dx.csv"
@@ -22,6 +23,7 @@ def read_dataset(csv_file: str) -> pd.DataFrame:
 
 
 def get_video_path(task_name, file_name) -> Path:
+    #return glob.glob(RAW_DATA_PATH + '/' + task_name + '/' + 'D028*')
     return Path(RAW_DATA_PATH, task_name, file_name)
 
 
@@ -100,21 +102,21 @@ def process_by_file(task_name, file_name):
 def main():
     data: pd.DataFrame = read_dataset(SPLIT_CSV_FILE).dropna()
     task_name = "ija"
-    import concurrent.futures
 
-    output_path = Path("/home/cko4/project_jointattention/data/proc_data/proc_ija/")
-    output_files = [p.stem for p in output_path.glob("*.npy") if p]
+    # import concurrent.futures
 
-    target_files = [f for f in data.file_name if f not in output_files]
+    # output_path = Path("/home/cko4/project_jointattention/data/proc_data/proc_ija/")
+    # output_files = [p.stem for p in output_path.glob("*.npy") if p]
 
+    # target_files = [f for f in data.file_name if f not in output_files]
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=30) as executor:
-        futures = [
-            executor.submit(process_by_file, task_name, file_name)
-            for file_name in target_files
-        ]
-        for done in concurrent.futures.as_completed(futures):
-            done.result()
+    # with concurrent.futures.ProcessPoolExecutor(max_workers=30) as executor:
+    #     futures = [
+    #         executor.submit(process_by_file, task_name, file_name)
+    #         for file_name in target_files
+    #     ]
+    #     for done in concurrent.futures.as_completed(futures):
+    #         done.result()
 
 
 if __name__ == "__main__":
