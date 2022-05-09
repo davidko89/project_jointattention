@@ -1,20 +1,19 @@
+#%%
 import matplotlib.pyplot as plt
 import cv2
 import pandas as pd
 import numpy as np
 import torch
 from torchvision import transforms
-from sqlite3 import OperationalError
 from pathlib import Path
-import glob
+from tqdm import tqdm
 
 
 SPLIT_CSV_FILE = "ija_videofile_with_dx.csv"
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 RAW_DATA_PATH = Path(DATA_PATH, "raw_data")
-PROC_DATA_PATH = Path(DATA_PATH, "proc_data")
-PROC_IJA_PATH = Path(PROC_DATA_PATH, "proc_ija")
+PROC_IJA_PATH = Path(DATA_PATH, "proc_data/proc_ija")
 
 
 def read_dataset(csv_file: str) -> pd.DataFrame:
@@ -23,7 +22,6 @@ def read_dataset(csv_file: str) -> pd.DataFrame:
 
 
 def get_video_path(task_name, file_name) -> Path:
-    #return glob.glob(RAW_DATA_PATH + '/' + task_name + '/' + 'D028*')
     return Path(RAW_DATA_PATH, task_name, file_name)
 
 
@@ -44,7 +42,7 @@ def read_video(video_path: Path):
 
     cap.release()
 
-    return np.transpose(buf, (0, 3, 1, 2))
+    return np.transpose(buf, (0, 3, 2, 1))
 
 
 def preproc_transform(video_arr):
@@ -99,12 +97,22 @@ def process_by_file(task_name, file_name):
     save_numpy_arr(preproc_arr, f"{file_name.split('.')[0]}.npy")
 
 
+#%%
 def main():
     data: pd.DataFrame = read_dataset(SPLIT_CSV_FILE).dropna()
     task_name = "ija"
+    output_path = PROC_IJA_PATH
+    output_files = [p.stem for p in output_path.glob("*.npy") if p]
+    target_files = [f for f in data.file_name if f not in output_files]
+
+    for idx, file_name in tqdm(enumerate(target_files)):
+        if idx == 4 :
+            break
+        process_by_file(task_name, file_name)
+        
 
     # import concurrent.futures
-
+    # from sqlite3 import OperationalError
     # output_path = Path("/home/cko4/project_jointattention/data/proc_data/proc_ija/")
     # output_files = [p.stem for p in output_path.glob("*.npy") if p]
 
@@ -121,3 +129,10 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    # for folder in PROC_DATA_PATH.glob("proc_ija"):
+    #     for file in folder.glob("B015_IJA_1.npy"):
+    #         arr = np.load(file)
+    #         print(arr[150,].shape)
+    #         plt.imshow(arr[150,].transpose(1, 2, 0))
+    #         break

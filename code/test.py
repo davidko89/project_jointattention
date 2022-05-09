@@ -1,8 +1,8 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from custom_datasets import create_data_loader
-from model import LRCN
+from data_loader import create_data_loader
+from lrcn_model import LRCN
 from pathlib import Path
 import logging
 

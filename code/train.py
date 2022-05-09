@@ -3,8 +3,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from custom_datasets import get_loader
-from model import LRCN
+from data_loader import get_loader
+from lrcn_model import LRCN
 from earlystopping import EarlyStopping
 from pathlib import Path
 

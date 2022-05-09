@@ -9,8 +9,7 @@ from pathlib import Path
 SPLIT_CSV_FILE = "ija_diagnosis_sets.csv"
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
-PROC_IJA_PATH = Path(DATA_PATH, "proc_data/proc_ija")
-# CNN_VIDEO_PATH = Path(DATA_PATH, "proc_data/cnn_ija")
+CNN_IJA_PATH = Path(DATA_PATH, "proc_data/cnn_ija")
 
 
 class VideoDataset(Dataset):
@@ -38,14 +37,14 @@ class VideoDataset(Dataset):
     def __getitem__(self, idx):
         target_data = self.data.iloc[idx]
         target_path = get_video_path(target_data["file_name"])
-        X_path = Path(PROC_IJA_PATH, f"{target_path.stem}.npy")
+        X_path = Path(CNN_IJA_PATH, f"{target_path.stem}.npy")
         X = np.load(X_path)
         y = target_data["label"].item()
         return X, y
 
 
 def get_video_path(file_name: str) -> Path:
-    return Path(PROC_IJA_PATH, file_name)
+    return Path(CNN_IJA_PATH, file_name)
 
 
 def get_loader(batch_size):

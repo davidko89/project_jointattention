@@ -1,3 +1,4 @@
+#%%
 import numpy as np
 import torch
 import torch.nn as nn
@@ -8,9 +9,8 @@ from tqdm import tqdm
 
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
-PROC_DATA_PATH = Path(DATA_PATH, "proc_data")
 PROC_IJA_PATH = Path(DATA_PATH, "proc_data/proc_ija")
-CNN_VIDEO_PATH = Path(DATA_PATH, "proc_data/cnn_ija")
+CNN_IJA_PATH = Path(DATA_PATH, "proc_data/cnn_ija")
 
 SEQ_LEN = 300
 
@@ -34,20 +34,28 @@ def save_numpy_arr(arr: np.ndarray, file_path: Path):
     np.save(file_path, arr)
 
 
+#%%
 def main():
     model = CNN()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu")
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
-    for file in tqdm((PROC_IJA_PATH).glob("*.npy")):
+    for file in tqdm(PROC_IJA_PATH.iterdir()):
         arr = torch.Tensor(np.load(file)).to(device)
-        print(arr.shape)
-        if arr.shape[1] != 3:
-            continue
+        # print(arr.shape)
+        # if arr.shape[1] != 3:
+        #     continue
+        file_name = str.split(file.as_posix(),'/')[-1]
         new_arr = model(arr)
-        output_file_path = Path(CNN_VIDEO_PATH, file)
-        save_numpy_arr(new_arr.detach().cpu().numpy(), output_file_path)
+        output_file_path = Path(CNN_IJA_PATH, file_name)
+        save_numpy_arr(new_arr.detach().numpy(), output_file_path)
 
 
 if __name__ == "__main__":
     main()
+
+    # for folder in PROC_DATA_PATH.glob("proc_ija"):
+    #     for file in folder.glob("B015_IJA_1.npy"):
+    #         arr = np.load(file)
+    #         print(arr.shape)
