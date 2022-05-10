@@ -1,91 +1,79 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from data_loader import create_data_loader
+from data_loader import get_loader
 from lrcn_model import LRCN
 from pathlib import Path
 import logging
+from sklearn.metrics import (
+    confusion_matrix,
+    accuracy_score,
+    roc_auc_score,
+    precision_score,
+    recall_score,
+)
+
 
 PROJECT_PATH = Path(__file__).parents[1]
-CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint/_.pt")  ##_specify
+CHECKPOINT_PATH = Path(
+    PROJECT_PATH, "checkpoint/vgg16lrcn_weight_2.pt"
+)  # specify which weight
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s|%(levelname)s|%(message)s")
 file_handler = logging.FileHandler(Path(PROJECT_PATH, "checkpoint/test_log.log"))
+file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 
 BATCH_SIZE = 16
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def test_trained_network(model, batch_size, test_loader, criterion, device):
-    # initialize lists to monitor test loss and accuracy
-    test_loss = 0.0
-    class_correct = list(0.0 for i in range(2))
-    class_total = list(0.0 for i in range(2))
+    # Initialize the prediction and label lists(tensors)
+    predlist = torch.zeros(0, dtype=torch.long, device="cpu")
+    lbllist = torch.zeros(0, dtype=torch.long, device="cpu")
 
-    model.eval()  # prep model for evaluation
+    with torch.no_grad():
+        train_loader, valid_loader, test_loader = get_loader(BATCH_SIZE)
+        for i, (X, y) in enumerate(test_loader):
+            X = X.to(DEVICE)
+            y = y.to(DEVICE)
+            outputs = model(X)
+            _, preds = torch.max(outputs, 1)
 
-    for data, target in test_loader:
-        data = data.float().to(device)
-        target = target.to(device)
+            # Append batch prediction results
+            predlist = torch.cat([predlist, preds.view(-1).cpu()])
+            lbllist = torch.cat([lbllist, y.view(-1).cpu()])
 
-        if len(target.data) != batch_size:
-            break
+    # Confusion matrix
+    conf_mat = confusion_matrix(lbllist.numpy(), predlist.numpy())
+    print(conf_mat)
 
-        # forward pass
-        output = model(data)
-        # calculate loss
-        loss = criterion(output, target)
-        # update test loss
-        test_loss += loss.item() * data.size(0)
-        # convert output probabilities to predicted class
-        _, pred = torch.max(output, 1)
-        # compare predictions to true label
-        correct = np.squeeze(pred.eq(target.data.view_as(pred)))
-        # calculate test accuracy for each object class
-        for i in range(batch_size):
-            label = target.data[i]
-            class_correct[label] += correct[i].item()
-            class_total[label] += 1
+    # Per-class accuracy
+    class_accuracy = 100 * conf_mat.diagonal() / conf_mat.sum(1)
+    print(class_accuracy)
 
-    # calculate and print avg test loss
-    test_loss = test_loss / len(test_loader.dataset)
-    logger.info("Test Loss: {:.6f}\n".format(test_loss))
-
-    for i in range(2):
-        if class_total[i] > 0:
-            logger.info(
-                "Test Accuracy of %5s: %2d%% (%2d/%2d)"
-                % (
-                    str(i),
-                    100 * class_correct[i] / class_total[i],
-                    np.sum(class_correct[i]),
-                    np.sum(class_total[i]),
-                )
-            )
-        else:
-            logger.info(
-                "Test Accuracy of %5s: N/A (no training examples)" % (class_total[i])
-            )
-
-    logger.info(
-        "\nTest Accuracy (Overall): %2d%% (%2d/%2d)"
-        % (
-            100.0 * np.sum(class_correct) / np.sum(class_total),
-            np.sum(class_correct),
-            np.sum(class_total),
-        )
-    )
+    for f in [accuracy_score, precision_score, recall_score, roc_auc_score]:
+        print(f(lbllist.numpy(), predlist.numpy()))
 
 
 def main():
-    model = LRCN(model_name="vgg16lrcn")
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = LRCN(
+        model_name="vgg16lrcn",
+        dropout=0.4,
+        seq_len=300,
+        num_lstm_layers=1,
+        lstm_hidden_dim=128,
+    )
+    device = DEVICE
     model.load_state_dict(torch.load(CHECKPOINT_PATH))
     model.to(device)
     criterion = nn.CrossEntropyLoss()
-    train_loader, valid_loader, test_loader = create_data_loader(BATCH_SIZE)
+    train_loader, valid_loader, test_loader = get_loader(BATCH_SIZE)
     test_trained_network(
         model,
         BATCH_SIZE,

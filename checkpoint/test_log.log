@@ -4,3 +4,19 @@ Test Accuracy of     0: 100% (103/103)
 Test Accuracy of     1:  0% ( 0/21)
 
 Test Accuracy (Overall): 83% (103/124)
+
+#########################################
+2022-05-10 10:11:40,114|DEBUG|Test Loss: 0.000176
+2022-05-10 10:11:40,115|DEBUG|Test Accuracy of     0: 100% (103/103)
+2022-05-10 10:11:40,115|DEBUG|Test Accuracy of     1: 100% ( 9/ 9)
+#########################################
+
+Confusion matrix
+[[102   1]
+ [  0  21]]
+
+accuracy_score: 0.9919354838709677
+precision_score: 0.9545454545454546
+recall_score: 1.0
+roc_auc_score: 0.9951456310679612
+

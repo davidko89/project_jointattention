@@ -4,8 +4,9 @@ import torch.nn.functional as F
 
 
 class LRCN(nn.Module):
-    def __init__(self, dropout, seq_len, num_lstm_layers, lstm_hidden_dim):
+    def __init__(self, model_name, dropout, seq_len, num_lstm_layers, lstm_hidden_dim):
         super(LRCN, self).__init__()
+        self.model_name = model_name
         self.lstm_hidden_dim = lstm_hidden_dim
         self.num_lstm_layers = num_lstm_layers
         self.seq_len = seq_len

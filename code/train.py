@@ -131,19 +131,26 @@ def train_model(
             break
 
     # load last checkpoint with best model
-    model.load_state_dict(torch.load(CHECKPOINT_PATH))
 
     return model, avg_train_losses, avg_valid_losses
 
 
+def find_the_last_saved_model():
+    list(Path(CHECKPOINT_PATH).glob("vgg16lrcn_weight*.pt"))
+
+
 def main():
-    model = LRCN(dropout=0.4, seq_len=300, num_lstm_layers=1, lstm_hidden_dim=128)
+    model = LRCN(
+        model_name="vgg16lrcn",
+        dropout=0.4,
+        seq_len=300,
+        num_lstm_layers=1,
+        lstm_hidden_dim=128,
+    )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
-    criterion = (
-        nn.CrossEntropyLoss()
-    )  # consider using BCELoss since binary classiication
-    optimizer = optim.SGD(model.parameters(), lr=0.01)
+    criterion = nn.CrossEntropyLoss()  # consider BCELoss since binary classiication
+    optimizer = optim.Adam(model.parameters(), lr=0.01)  # Adam over SGD
     scheduler = optim.lr_scheduler.StepLR(
         optimizer, step_size=2, gamma=0.1
     )  # learning rate scheduler:
