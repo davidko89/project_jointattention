@@ -13,6 +13,7 @@ SPLIT_CSV_FILE = "ija_videofile_with_dx.csv"
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 RAW_DATA_PATH = Path(DATA_PATH, "raw_data")
+PROC_DATA_PATH = Path(DATA_PATH, "proc_data")
 PROC_IJA_PATH = Path(DATA_PATH, "proc_data/proc_ija")
 
 
@@ -106,10 +107,9 @@ def main():
     target_files = [f for f in data.file_name if f not in output_files]
 
     for idx, file_name in tqdm(enumerate(target_files)):
-        if idx == 4 :
+        if idx == 4:
             break
         process_by_file(task_name, file_name)
-        
 
     # import concurrent.futures
     # from sqlite3 import OperationalError

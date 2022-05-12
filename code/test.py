@@ -44,7 +44,6 @@ def test_trained_network(model, batch_size, test_loader, criterion, device):
             y = y.to(DEVICE)
             outputs = model(X)
             _, preds = torch.max(outputs, 1)
-
             # Append batch prediction results
             predlist = torch.cat([predlist, preds.view(-1).cpu()])
             lbllist = torch.cat([lbllist, y.view(-1).cpu()])
@@ -52,6 +51,7 @@ def test_trained_network(model, batch_size, test_loader, criterion, device):
     # Confusion matrix
     conf_mat = confusion_matrix(lbllist.numpy(), predlist.numpy())
     print(conf_mat)
+    logger.info(conf_mat)
 
     # Per-class accuracy
     class_accuracy = 100 * conf_mat.diagonal() / conf_mat.sum(1)
@@ -59,6 +59,7 @@ def test_trained_network(model, batch_size, test_loader, criterion, device):
 
     for f in [accuracy_score, precision_score, recall_score, roc_auc_score]:
         print(f(lbllist.numpy(), predlist.numpy()))
+        logger.info(f(lbllist.numpy(), predlist.numpy()))
 
 
 def main():
