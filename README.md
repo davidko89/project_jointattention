@@ -23,6 +23,8 @@ Create a classification model for ASD(Autism Spectrum Disorder) and TD(Typical d
      
 ## Data
 ### [`data/ija_videofile_with_dx.csv`](data/dataset_videos.csv)
+### [`data/rja_high_videofile_with_dx.csv`](data/dataset_videos.csv)
+### [`data/rja_low_videofile_with_dx.csv`](data/dataset_videos.csv)
 * file_name
 * task
     1. IJA
