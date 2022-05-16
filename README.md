@@ -6,13 +6,21 @@
 Create a classification model for ASD(Autism Spectrum Disorder) and TD(Typical development)
 
 ## Project structure
+checkpoint
 code
 data
-    assembly
-    processed_videos
-    video_npy 
-    ija_diagnosis_sets.csv
-    ija_videofile_with_dx.csv
+    proc_data
+        cnn_ija
+        cnn_rja_high
+        cnn_rja_low
+        proc_ija
+        proc_rja_high
+        proc_rja_low
+    raw_data
+        ija
+        rja_high
+        rja_low
+     
 ## Data
 ### [`data/dataset_videos.csv`](data/dataset_videos.csv)
 * file_name
