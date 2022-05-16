@@ -1,3 +1,4 @@
+#%%
 import torch
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
 from torchvision.transforms import transforms
@@ -6,10 +7,12 @@ import pandas as pd
 from pathlib import Path
 
 
-SPLIT_CSV_FILE = "ija_diagnosis_sets.csv"
+SPLIT_CSV_FILE = "rja_high_diagnosis_sets.csv"
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 CNN_IJA_PATH = Path(DATA_PATH, "proc_data/cnn_ija")
+CNN_RJA_LOW_PATH = Path(DATA_PATH, "proc_data/cnn_rja_low")
+CNN_RJA_HIGH_PATH = Path(DATA_PATH, "proc_data/cnn_rja_high")
 
 
 class VideoDataset(Dataset):
@@ -37,14 +40,14 @@ class VideoDataset(Dataset):
     def __getitem__(self, idx):
         target_data = self.data.iloc[idx]
         target_path = get_video_path(target_data["file_name"])
-        X_path = Path(CNN_IJA_PATH, f"{target_path.stem}.npy")
+        X_path = Path(CNN_RJA_HIGH_PATH, f"{target_path.stem}.npy")
         X = np.load(X_path)
         y = target_data["label"].item()
         return X, y
 
 
 def get_video_path(file_name: str) -> Path:
-    return Path(CNN_IJA_PATH, file_name)
+    return Path(CNN_RJA_HIGH_PATH, file_name)
 
 
 def get_loader(batch_size):
@@ -52,7 +55,7 @@ def get_loader(batch_size):
     train_dataset = VideoDataset("train", SPLIT_CSV_FILE, my_transform)
     valid_dataset = VideoDataset("valid", SPLIT_CSV_FILE, my_transform)
     test_dataset = VideoDataset("test", SPLIT_CSV_FILE, my_transform)
-    class_weights = [1, 6]
+    class_weights = [1, 3]
     sample_weights = [0] * len(train_dataset)
 
     for batch_idx, (X, y) in enumerate(train_dataset):
@@ -87,3 +90,5 @@ if __name__ == "__main__":
         num_ASD += torch.sum(y == 1)
     print(num_TD)
     print(num_ASD)
+
+# %%

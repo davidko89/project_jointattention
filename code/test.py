@@ -16,7 +16,7 @@ from sklearn.metrics import (
 
 PROJECT_PATH = Path(__file__).parents[1]
 CHECKPOINT_PATH = Path(
-    PROJECT_PATH, "checkpoint/vgg16lrcn_weight_2.pt"
+    PROJECT_PATH, "checkpoint/vgg16lrcn_rja_high_weight_2.pt"
 )  # specify which weight
 
 
@@ -28,7 +28,8 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 
-BATCH_SIZE = 16
+BATCH_SIZE = 1
+SEQ_LEN = 150
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -64,9 +65,9 @@ def test_trained_network(model, batch_size, test_loader, criterion, device):
 
 def main():
     model = LRCN(
-        model_name="vgg16lrcn",
+        model_name="vgg16lrcn_rja_high",
         dropout=0.4,
-        seq_len=300,
+        seq_len=SEQ_LEN,
         num_lstm_layers=1,
         lstm_hidden_dim=128,
     )

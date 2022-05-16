@@ -1,3 +1,4 @@
+#%%
 import logging
 import numpy as np
 import torch
@@ -27,8 +28,9 @@ logger.addHandler(stream_handler)
 
 
 BATCH_SIZE = 16
-N_EPOCHS = 5
-PATIENCE = 3
+N_EPOCHS = 10
+SEQ_LEN = 150
+PATIENCE = 7
 
 
 def train_model(
@@ -130,20 +132,18 @@ def train_model(
             logger.info("Early stopping")
             break
 
-    # load last checkpoint with best model
-
     return model, avg_train_losses, avg_valid_losses
 
 
 def find_the_last_saved_model():
-    list(Path(CHECKPOINT_PATH).glob("vgg16lrcn_weight*.pt"))
+    list(Path(CHECKPOINT_PATH).glob("vgg16lrcn_rja_low_weight*.pt"))
 
 
 def main():
     model = LRCN(
-        model_name="vgg16lrcn",
+        model_name="vgg16lrcn_rja_high",
         dropout=0.4,
-        seq_len=300,
+        seq_len=SEQ_LEN,
         num_lstm_layers=1,
         lstm_hidden_dim=128,
     )
@@ -171,3 +171,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

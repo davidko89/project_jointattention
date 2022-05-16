@@ -9,13 +9,14 @@ from pathlib import Path
 from tqdm import tqdm
 
 
-SPLIT_CSV_FILE = "rja_low_videofile_with_dx.csv"
+SPLIT_CSV_FILE = "rja_high_videofile_with_dx.csv"
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 RAW_DATA_PATH = Path(DATA_PATH, "raw_data")
 PROC_DATA_PATH = Path(DATA_PATH, "proc_data")
 PROC_IJA_PATH = Path(DATA_PATH, "proc_data/proc_ija")
 PROC_RJA_LOW_PATH = Path(DATA_PATH, "proc_data/proc_rja_low")
+PROC_RJA_HIGH_PATH = Path(DATA_PATH, "proc_data/proc_rja_high")
 
 
 def read_dataset(csv_file: str) -> pd.DataFrame:
@@ -65,7 +66,7 @@ def preproc_transform(video_arr):
     )
 
 
-def pad_frame(video_arr, target_length=300):
+def pad_frame(video_arr, target_length=150):
     length = video_arr.shape[0]
     if length >= target_length:
         new_video_arr = video_arr[:target_length]
@@ -87,7 +88,7 @@ def pad_along_axis(array, target_length, axis=0):
 
 
 def save_numpy_arr(arr: np.ndarray, file_name: str):
-    np.save(Path(PROC_RJA_LOW_PATH, file_name), arr)
+    np.save(Path(PROC_RJA_HIGH_PATH, file_name), arr)
 
 
 def process_by_file(task_name, file_name):
@@ -102,8 +103,8 @@ def process_by_file(task_name, file_name):
 #%%
 def main():
     data: pd.DataFrame = read_dataset(SPLIT_CSV_FILE).dropna()
-    task_name = "rja_low"
-    output_path = PROC_RJA_LOW_PATH
+    task_name = "rja_high"
+    output_path = PROC_RJA_HIGH_PATH
     output_files = [p.stem for p in output_path.glob("*.npy") if p]
     target_files = [f for f in data.file_name if f not in output_files]
 
@@ -136,4 +137,11 @@ if __name__ == "__main__":
     #         arr = np.load(file)
     #         print(arr[150,].shape)
     #         plt.imshow(arr[150,].transpose(1, 2, 0))
+    #         break
+
+    # for folder in PROC_DATA_PATH.glob("proc_rja_high"):
+    #     for file in folder.glob("B014_RJA_high_BL_1.npy"):
+    #         arr = np.load(file)
+    #         print(arr[100,].shape)
+    #         plt.imshow(arr[100,].transpose(1, 2, 0))
     #         break
