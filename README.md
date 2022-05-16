@@ -6,23 +6,23 @@
 Create a classification model for ASD(Autism Spectrum Disorder) and TD(Typical development)
 
 ## Project structure
-checkpoint
-code
-data
-    proc_data
-        cnn_ija
-        cnn_rja_high
-        cnn_rja_low
-        proc_ija
-        proc_rja_high
-        proc_rja_low
-    raw_data
-        ija
-        rja_high
-        rja_low
+* checkpoint
+* code
+* data
+* proc_data
+    1. cnn_ija
+    2. cnn_rja_high
+    3. cnn_rja_low
+    4. proc_ija
+    5. proc_rja_high
+    6. proc_rja_low
+* raw_data
+    1. ija
+    2. rja_high
+    3. rja_low
      
 ## Data
-### [`data/dataset_videos.csv`](data/dataset_videos.csv)
+### [`data/ija_videofile_with_dx.csv`](data/dataset_videos.csv)
 * file_name
 * task
     1. IJA
