@@ -14,8 +14,6 @@ PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 RAW_DATA_PATH = Path(DATA_PATH, "raw_data")
 PROC_DATA_PATH = Path(DATA_PATH, "proc_data")
-PROC_IJA_PATH = Path(DATA_PATH, "proc_data/proc_ija")
-PROC_RJA_LOW_PATH = Path(DATA_PATH, "proc_data/proc_rja_low")
 PROC_RJA_HIGH_PATH = Path(DATA_PATH, "proc_data/proc_rja_high")
 
 

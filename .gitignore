@@ -20,4 +20,5 @@ env
 *.npy
 *.pth
 *.pt
+*.png
 

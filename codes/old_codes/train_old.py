@@ -1,14 +1,12 @@
-#%%
 import logging
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from data_loader import get_loader
-from lrcn_model import LRCN
 from earlystopping import EarlyStopping
 from pathlib import Path
-
+from lrcn_model import LRCN
 
 PROJECT_PATH = Path(__file__).parents[1]
 CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint")
@@ -25,7 +23,6 @@ stream_handler.setFormatter(formatter)
 
 logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
-
 
 BATCH_SIZE = 16
 N_EPOCHS = 10
@@ -63,6 +60,7 @@ def train_model(
             # clear the gradients of all optimized variables
             optimizer.zero_grad()
             # forward pass
+
             output = model(X)
             loss = criterion(output, y)
             loss.backward()
@@ -136,16 +134,16 @@ def train_model(
 
 
 def find_the_last_saved_model():
-    list(Path(CHECKPOINT_PATH).glob("vgg16lrcn_rja_low_weight*.pt"))
+    list(Path(CHECKPOINT_PATH).glob("vgg16_lrcn_rja_high_weight*.pt"))
 
 
 def main():
     model = LRCN(
-        model_name="vgg16lrcn_rja_high",
+        model_name="vgg16_lrcn_rja_high",
         dropout=0.4,
         seq_len=SEQ_LEN,
-        num_lstm_layers=1,
-        lstm_hidden_dim=128,
+        lstm_layers=1,
+        hidden_size=128,
     )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
@@ -171,4 +169,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
