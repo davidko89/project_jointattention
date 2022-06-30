@@ -107,10 +107,3 @@ RJA_high
 2022-06-30 16:23:57,735|INFO|recall_score: 1.0
 2022-06-30 16:23:57,737|INFO|roc_auc_score: 1.0
 2022-06-30 16:23:57,739|INFO|f1_score: 1.0
-2022-06-30 16:44:47,976|INFO|confusion_matrix: [[103   0]
- [  0  21]]
-2022-06-30 16:44:47,981|INFO|accuracy_score: 1.0
-2022-06-30 16:44:47,984|INFO|precision_score: 1.0
-2022-06-30 16:44:47,986|INFO|recall_score: 1.0
-2022-06-30 16:44:47,990|INFO|roc_auc_score: 1.0
-2022-06-30 16:44:47,992|INFO|f1_score: 1.0
