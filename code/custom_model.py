@@ -1,3 +1,4 @@
+#%%
 import torch
 import torch.nn as nn
 from typing import Tuple
@@ -15,31 +16,42 @@ class LRCN(nn.Module):
 
     def forward(self, X) -> Tuple[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
         lstm_inputs = X.view(X.size(0), self.seq_len, -1)
-        lstm_outputs, (h, c) = self.lstm(lstm_inputs)
-        return lstm_outputs, (h, c)
+        lstm_outputs, hidden_states = self.lstm(lstm_inputs)
+        return lstm_outputs, hidden_states
+        # lstm_outputs:[batch_size, seq_len, num_hiddens]
 
 
-class FusionSelfAttention(nn.Module):
-    def __init__(self, num_hiddens):
+class CustomAttention(nn.Module):
+    def __init__(self, num_hiddens, attention_dim):
         super().__init__()
-        self.linear = nn.Linear(num_hiddens, num_hiddens)
-        self.tanh = nn.Tanh()
-        self.softmax = nn.Softmax(dim=-1)
+        self.lstmoutput_attention_projection = nn.Linear(num_hiddens, attention_dim)
+        self.attention = nn.Linear(attention_dim, 1)
+        self.ReLU = nn.ReLU()
+        self.softmax = nn.Softmax(dim=1)
 
-    def forward(self, lstm_outputs):
-        # lstm_outputs (seq_len, hidden)
-        alpha = self.softmax(self.tanh(self.linear(lstm_outputs)))
-        result = torch.sum(alpha * lstm_outputs, axis=-1)
-        return result, alpha  # [1, 150] batch_size, seq_len
+    def forward(self, lstm_outputs: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        """compute z_t but will use only alphas_t for visualization @ testing
+        Args:
+        lstm_outputs (torch.Tensor): [batch_size, seq_len, num_hiddens]
+        """
+        lstmoutput_attention = self.lstmoutput_attention_projection(lstm_outputs)
+        # In: (batch_dim, seq_len, num_hiddens), Out: (batch_dim, seq_len, attention_dim)
+        attention = self.attention(self.ReLU(lstmoutput_attention)).squeeze(2)
+        # In: (batch_dim, seq_len, attention_dim), Out: (batch_size, seq_len)
+        alphas_t = self.softmax(attention)  # Out: (batch_dim, seq_len)
+        attention_weighted_encoding = (lstm_outputs * alphas_t.unsqueeze(2)).sum(
+            dim=1
+        )  # Out: (batch_diim, num_hiddens)
+        return attention_weighted_encoding, alphas_t
 
 
 class CustomMLP(nn.Module):
-    def __init__(self, seq_len, dropout):
+    def __init__(self, num_hiddens, dropout):
         super().__init__()
-        self.linear1 = nn.Linear(seq_len, seq_len)
+        self.linear1 = nn.Linear(num_hiddens, num_hiddens)
         self.relu = nn.ReLU()
         self.drop1 = nn.Dropout(dropout)
-        self.linear2 = nn.Linear(seq_len, 2)
+        self.linear2 = nn.Linear(num_hiddens, 2)
         self.softmax = nn.Softmax(dim=-1)
 
         self.net = nn.Sequential(
@@ -58,6 +70,7 @@ class CustomNet(nn.Module):
         num_hiddens,
         num_layers,
         dropout,
+        attention_dim,
     ):
         super().__init__()
         self.lrcn = LRCN(
@@ -66,44 +79,44 @@ class CustomNet(nn.Module):
             num_hiddens,
             num_layers,
         )
-        self.attention = FusionSelfAttention(num_hiddens)  # 128
-        self.mlp = CustomMLP(seq_len, dropout)  # 150
+        self.attention = CustomAttention(num_hiddens, attention_dim)
+        self.mlp = CustomMLP(num_hiddens, dropout)
 
     def forward(self, X) -> Tuple[torch.Tensor, torch.Tensor]:
         """
-        return: Y, attention
+        Input: X (=lstm_outputs: torch.Tensor)
+        Returns: output, attention
         """
         X, _ = self.lrcn(X)  # X: [1, 150, 128]
-        attention, alpha = self.attention(X)
-        return self.mlp(attention), alpha
+        z_t, alphas_t = self.attention(X)
+        return self.mlp(z_t), alphas_t
 
 
 if __name__ == "__main__":
     X = torch.rand(size=(1, 150, 512, 7, 7))
-    # model1 = LRCN(input_size=25088, seq_len=150, num_hiddens=128, num_layers=2)
-    # model2 = CustomMLP(num_hiddens=128, dropout=0.5)
-    # model3 = FusionSelfAttention(input_dimension=150)
+    # model1 = LRCN(input_size=25088, seq_len=150, num_hiddens=128, num_layers=1)
+    # lstm_outputs, hidden_states = model1(X)
+    # print(X.shape)
+    # print(lstm_outputs.shape)
+    # print(hidden_states[0].shape)
+
+    # model2 = CustomAttention(num_hiddens=128, attention_dim=128)
+    # z_t, alphas_t = model2(lstm_outputs)
+    # print(z_t.shape)
+    # print(alphas_t.shape)
+
+    # model3 = CustomMLP(num_hiddens=128, dropout=0.5)
+
     model4 = CustomNet(
         input_size=25088,
         seq_len=150,
         num_hiddens=128,
         num_layers=2,
-        dropout=0.5,
+        dropout=0.4,
+        attention_dim=128,
     )
+    out, alphas_t = model4(X)
+    print(out.shape)  # out: [1, 2]
+    print(alphas_t.shape)  # alphas_t: [1, 150]
 
-    # output = model1(X)
-    # print(output[0].shape)
-    # print(output[1])
-    # lstm_input = X.view(X.size(0), X.size(1), -1)
-    # lstm_output, hidden = model1(lstm_input)
-    # print(lstm_input.shape)
-    # """lstm_input=[batch_size, seq_len, input_size]"""
-    # print(lstm_output.shape)
-    # """hidden_state=[batch_size, seq_len, num_hiddens]"""
-    # print(hidden)
-    # X = model1(X)
-    # pred_y = model2(X)
-    # attention_embeddings = model3(X)
-    Y, attention = model4(X)
-    print(Y.shape)  # Y: [1, 2]
-    print(attention.shape)  # attention: [1, 150]
+# %%

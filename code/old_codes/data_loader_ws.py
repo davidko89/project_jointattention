@@ -14,6 +14,12 @@ def get_cnn_path(task, data_path):
     return Path(data_path, f"proc_data/cnn_{task.name.lower()}")
 
 
+# SPLIT_CSV_FILE = "rja_high_diagnosis_sets.csv" or "rja_low_diagnosis_sets.csv" or "ija_diagnosis_sets.csv"
+# CNN_IJA_PATH = Path(DATA_PATH, "proc_data/cnn_ija")
+# CNN_RJA_LOW_PATH = Path(DATA_PATH, "proc_data/cnn_rja_low")
+# CNN_RJA_HIGH_PATH = Path(DATA_PATH, "proc_data/cnn_rja_high")
+
+
 class VideoDataset(Dataset):
     def __init__(self, task, group: str, data_path, transform=None):
         """
@@ -55,7 +61,17 @@ def get_loader(task, batch_size, data_path):
     valid_dataset = VideoDataset(task, "valid", data_path, my_transform)
     test_dataset = VideoDataset(task, "test", data_path, my_transform)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+    class_weights = [1, 3]
+    sample_weights = [0] * len(train_dataset)
+
+    for batch_idx, (_, y) in enumerate(train_dataset):
+        sample_weights[batch_idx] = class_weights[y]
+
+    sampler = WeightedRandomSampler(
+        sample_weights, num_samples=len(sample_weights), replacement=True
+    )
+
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, sampler=sampler)
 
     valid_loader = DataLoader(
         valid_dataset, batch_size=batch_size, shuffle=False, num_workers=0

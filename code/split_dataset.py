@@ -20,6 +20,7 @@ result = dataset[["id", "label"]].drop_duplicates().reset_index(drop=True)
 print(result)
 
 
+#%%
 id = result["id"]
 label = result["label"]
 

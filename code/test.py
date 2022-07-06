@@ -12,7 +12,6 @@ from sklearn.metrics import (
 )
 import torch
 import matplotlib.pyplot as plt
-
 from data_loader import get_loader
 from custom_model import CustomNet
 
@@ -26,10 +25,10 @@ class Task(Enum):
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 CHECKPOINT_PATH = Path(
-    PROJECT_PATH, "checkpoint/lrcn_atten_rja_high_weight.pt"
+    PROJECT_PATH, "checkpoint/lrcn_atten_ija_ws_220701_weight_10.pt"
 )  # specify which weight
 BATCH_SIZE = 1
-SEQ_LEN = 150  # 300 if IJA & RJA_low, 150 if RJA_high
+SEQ_LEN = 300  # 300 if IJA & RJA_low, 150 if RJA_high
 
 
 logger = logging.getLogger()
@@ -51,8 +50,9 @@ def test_trained_network(model, test_loader, device):
         X = X.to(device)
         y = y.to(device)
 
-        output, attention = model(X)
-        attention_arr = attention.detach().cpu().numpy()
+        output, alphas_t = model(X)
+        
+        alphas_arr = alphas_t.detach().cpu().numpy()
 
         pred = torch.argmax(output, dim=1)
 
@@ -61,7 +61,7 @@ def test_trained_network(model, test_loader, device):
         lbllist = torch.cat([lbllist, y.view(-1).cpu()])
 
     conf_mat = confusion_matrix(lbllist.numpy(), predlist.numpy())
-    print(conf_mat)
+    
     logger.info(f"confusion_matrix: {conf_mat}")
 
     acc_score = accuracy_score(lbllist.numpy(), predlist.numpy())
@@ -79,7 +79,7 @@ def test_trained_network(model, test_loader, device):
     f1 = f1_score(lbllist.numpy(), predlist.numpy())
     logger.info(f"f1_score: {f1}")
 
-    return attention_arr
+    return alphas_arr
 
 
 def main(task: Task):
@@ -93,7 +93,8 @@ def main(task: Task):
         seq_len=SEQ_LEN,
         num_hiddens=128,
         num_layers=2,
-        dropout=0.5,
+        dropout=0.4,
+        attention_dim=128,
     )
 
     model.to(device)
@@ -101,15 +102,19 @@ def main(task: Task):
 
     _, _, test_loader = get_loader(task, BATCH_SIZE, DATA_PATH)
 
-    attention_arr = test_trained_network(
+    alphas_arr = test_trained_network(
         model,
         test_loader,
-        device,
+        device,  
     )
+
+    fig, ax = plt.subplots()
+    im = ax.imshow(alphas_arr.squeeze(0).reshape(-1, 300))
+    plt.plot(alphas_arr.squeeze(0))
 
 
 if __name__ == "__main__":
-    task = Task.RJA_HIGH
+    task = Task.IJA
     main(task)
 
     # model = CustomNet(
@@ -117,19 +122,17 @@ if __name__ == "__main__":
     #     seq_len=150,
     #     num_hiddens=128,
     #     num_layers=2,
-    #     dropout=0.5,
-    # )
+    #     dropout=0.4,
+    #     attention_dim=128,)
     # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # model.to(device)
     # model.load_state_dict(torch.load(CHECKPOINT_PATH))
     # X = torch.rand(size=(1, 150, 512, 7, 7))
     # X = X.to(device)
-    # output, attention = model(X)
-    # attention_arr = attention.detach().cpu().numpy()
-
-    # attention_visualization #
+    # output, alphas_t = model(X)
+    # alphas_arr = alphas_t.detach().cpu().numpy()
     # fig, ax = plt.subplots()
-    # im = ax.imshow(attention_arr.squeeze(0).reshape(-1, 150))
-    # plt.plot(attention_arr.squeeze(0))
+    # im = ax.imshow(alphas_arr.squeeze(0).reshape(-1, 150))
+    # plt.plot(alphas_arr.squeeze(0))
 
 # %%

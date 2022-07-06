@@ -17,7 +17,7 @@ CNN_RJA_LOW_PATH = Path(DATA_PATH, "proc_data/cnn_rja_low")
 CNN_RJA_HIGH_PATH = Path(DATA_PATH, "proc_data/cnn_rja_high")
 
 
-SEQ_LEN = 150 # 150 if RJA_high, 300 if IJA or RJA_low 
+SEQ_LEN = 300 # 150 if RJA_high, 300 if IJA or RJA_low 
 
 
 class CNN(nn.Module):
@@ -46,7 +46,7 @@ def main():
     # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
         
-    for file in tqdm(PROC_RJA_HIGH_PATH.iterdir()):
+    for file in tqdm(PROC_RJA_LOW_PATH.iterdir()):
         arr = torch.Tensor(np.load(file)).to(device)
         # print(arr.shape)
         # if arr.shape[1] != 3:
@@ -55,7 +55,7 @@ def main():
                 
         new_arr = model(arr)
     
-        output_file_path = Path(CNN_RJA_HIGH_PATH, file_name)
+        output_file_path = Path(CNN_RJA_LOW_PATH, file_name)
         save_numpy_arr(new_arr.detach().numpy(), output_file_path)
 
 

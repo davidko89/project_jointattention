@@ -1,4 +1,3 @@
-#%%
 import logging
 import numpy as np
 import torch
@@ -20,10 +19,11 @@ PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint")
 BATCH_SIZE = 16
-SEQ_LEN = 150  # 300 if IJA & RJA_low, 150 if RJA_high
+SEQ_LEN = 300  # 300 if IJA & RJA_low, 150 if RJA_high
 N_EPOCHS = 10
 PATIENCE = 7
 
+'''Change logger save @ earystopping.py'''
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -151,13 +151,14 @@ def main(task: Task):
         seq_len=SEQ_LEN,
         num_hiddens=128,
         num_layers=2,
-        dropout=0.5,
+        dropout=0.4,
+        attention_dim=128,
     )
 
     model.to(device)
 
     criterion = nn.CrossEntropyLoss()  # consider BCELoss since binary classiication
-    optimizer = optim.Adam(model.parameters(), lr=0.01)  # Adam over SGD
+    optimizer = optim.Adam(model.parameters(), lr=0.001)  # Adam over SGD
     scheduler = optim.lr_scheduler.StepLR(
         optimizer, step_size=2, gamma=0.1
     )  # learning rate scheduler:
@@ -179,5 +180,5 @@ def main(task: Task):
 
 
 if __name__ == "__main__":
-    task = Task.RJA_HIGH
+    task = Task.RJA_LOW
     main(task)

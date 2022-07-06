@@ -6,7 +6,7 @@ import torch.optim as optim
 from data_loader import get_loader
 from earlystopping import EarlyStopping
 from pathlib import Path
-from lrcn_model import LRCN
+from code.old_codes.lrcn_model import LRCN
 
 PROJECT_PATH = Path(__file__).parents[1]
 CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint")

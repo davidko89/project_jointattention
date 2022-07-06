@@ -50,6 +50,7 @@ def preproc_transform(video_arr):
     preprocess = transforms.Compose(
         [
             transforms.ToTensor(),
+            transforms.Grayscale(3),
             transforms.Resize(224),
             transforms.CenterCrop(224),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
@@ -107,8 +108,8 @@ def main():
     target_files = [f for f in data.file_name if f not in output_files]
 
     for idx, file_name in tqdm(enumerate(target_files)):
-        # if idx == 4:
-        #     break
+        if idx == 4:
+            break
         process_by_file(task_name, file_name)
 
     # import concurrent.futures

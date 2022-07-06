@@ -9,7 +9,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 
-SPLIT_CSV_FILE = "rja_low_videofile_with_dx.csv"
+SPLIT_CSV_FILE = "ija_videofile_with_dx.csv" # "ija_videofile_with_dx.csv" or "rja_low_videofile_with_dx.csv" 
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 RAW_DATA_PATH = Path(DATA_PATH, "raw_data")
@@ -51,9 +51,11 @@ def preproc_transform(video_arr):
     preprocess = transforms.Compose(
         [
             transforms.ToTensor(),
+            transforms.Grayscale(3),
             transforms.Resize(224),
             transforms.CenterCrop(224),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+            
         ]
     )
     return torch.cat(
@@ -87,7 +89,7 @@ def pad_along_axis(array, target_length, axis=0):
 
 
 def save_numpy_arr(arr: np.ndarray, file_name: str):
-    np.save(Path(PROC_RJA_LOW_PATH, file_name), arr)
+    np.save(Path(PROC_IJA_PATH, file_name), arr) # PROC_RJA_LOW_PATH or PROC_IJA_PATH
 
 
 def process_by_file(task_name, file_name):
@@ -102,14 +104,14 @@ def process_by_file(task_name, file_name):
 #%%
 def main():
     data: pd.DataFrame = read_dataset(SPLIT_CSV_FILE).dropna()
-    task_name = "rja_low"
-    output_path = PROC_RJA_LOW_PATH
+    task_name = "ija" # "rja_low" or "ija"
+    output_path = PROC_IJA_PATH # PROC_RJA_LOW_PATH or PROC_IJA_PATH
     output_files = [p.stem for p in output_path.glob("*.npy") if p]
     target_files = [f for f in data.file_name if f not in output_files]
 
     for idx, file_name in tqdm(enumerate(target_files)):
-        # if idx == 4:
-        #     break
+        if idx == 5:
+            break
         process_by_file(task_name, file_name)
 
     # import concurrent.futures
