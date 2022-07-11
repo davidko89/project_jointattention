@@ -16,6 +16,7 @@ class LRCN(nn.Module):
 
     def forward(self, X) -> Tuple[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
         lstm_inputs = X.view(X.size(0), self.seq_len, -1)
+        # print(type(lstm_inputs))
         lstm_outputs, (h, c) = self.lstm(lstm_inputs)
         return lstm_outputs, (h, c)
 
@@ -29,9 +30,9 @@ class CustomAttention(nn.Module):
 
     def forward(self, lstm_outputs):
         # lstm_outputs (seq_len, hidden)
-        alpha = self.softmax(self.tanh(self.linear(lstm_outputs)))
+        alpha = self.softmax(self.tanh(self.linear(lstm_outputs)).squeeze(2))
         result = torch.sum(alpha * lstm_outputs, axis=-1)
-        return result, alpha  # [1, 150] batch_size, seq_len
+        return result, alpha  # alpha: [batch_size, seq_len]
 
 
 class CustomMLP(nn.Module):
@@ -105,8 +106,8 @@ if __name__ == "__main__":
     # X = model1(X)
     # pred_y = model2(X)
     # attention_embeddings = model3(X)
-    Y, attention = model4(X)
+    Y, alpha = model4(X)
     print(Y.shape)  # Y: [1, 2]
-    print(attention.shape)  # attention: [1, 150]
+    print(alpha.shape)  # attention: [1, 150]
 
 # %%

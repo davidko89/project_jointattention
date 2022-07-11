@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 def get_split_csv_file_name(task, data_path):
-    return Path(data_path, f"{task.name.lower()}_diagnosis_sets.csv")
+    return Path(data_path, f"{task.name.lower()}_diagnosis_sets_1150.csv")
 
 
 def get_cnn_path(task, data_path):

@@ -3,11 +3,12 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from data_loader import get_loader
 from earlystopping import EarlyStopping
 from pathlib import Path
 from enum import Enum, auto
-from custom_model import CustomNet
+from data_loader import get_loader
+from custom_model_1 import CustomNet
+
 
 class Task(Enum):
     IJA = auto()
@@ -19,7 +20,7 @@ PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint")
 BATCH_SIZE = 16
-SEQ_LEN = 300  # 300 if IJA & RJA_low, 150 if RJA_high
+SEQ_LEN = 150  # 300 if IJA, 150 if RJA_high & RJA_low
 N_EPOCHS = 10
 PATIENCE = 7
 
@@ -152,9 +153,9 @@ def main(task: Task):
         num_hiddens=128,
         num_layers=2,
         dropout=0.4,
-        attention_dim=128,
+        # attention_dim=128,
     )
-
+    
     model.to(device)
 
     criterion = nn.CrossEntropyLoss()  # consider BCELoss since binary classiication
@@ -180,5 +181,5 @@ def main(task: Task):
 
 
 if __name__ == "__main__":
-    task = Task.RJA_LOW
+    task = Task.RJA_HIGH # IJA, RJA_HIGH, RJA_LOW
     main(task)

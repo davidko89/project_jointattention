@@ -57,6 +57,6 @@ class EarlyStopping:
                 f"Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving model ..."
             )
         torch.save(
-            model.state_dict(), Path(self.path, f"lrcn_atten_rja_low_ws_220701_weight_{epoch}.pt")
+            model.state_dict(), Path(self.path, f"lrcnatten1_rjahigh_220708_weight_{epoch}.pt")
         )
         self.val_loss_min = val_loss

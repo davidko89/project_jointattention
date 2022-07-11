@@ -13,7 +13,7 @@ from sklearn.metrics import (
 import torch
 import matplotlib.pyplot as plt
 from data_loader import get_loader
-from custom_model import CustomNet
+from custom_model_1 import CustomNet
 
 
 class Task(Enum):
@@ -25,10 +25,10 @@ class Task(Enum):
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 CHECKPOINT_PATH = Path(
-    PROJECT_PATH, "checkpoint/lrcn_atten_ija_ws_220701_weight_10.pt"
+    PROJECT_PATH, "checkpoint/lrcnatten1_rjalow_small_220708_weight_10.pt"
 )  # specify which weight
 BATCH_SIZE = 1
-SEQ_LEN = 300  # 300 if IJA & RJA_low, 150 if RJA_high
+SEQ_LEN = 150  # 300 if IJA, 150 if RJA_high or RJA_low
 
 
 logger = logging.getLogger()
@@ -82,6 +82,7 @@ def test_trained_network(model, test_loader, device):
     return alphas_arr
 
 
+#%%
 def main(task: Task):
     logger.info(f"{task.name}")
 
@@ -94,7 +95,7 @@ def main(task: Task):
         num_hiddens=128,
         num_layers=2,
         dropout=0.4,
-        attention_dim=128,
+        # attention_dim=128,
     )
 
     model.to(device)
@@ -109,12 +110,12 @@ def main(task: Task):
     )
 
     fig, ax = plt.subplots()
-    im = ax.imshow(alphas_arr.squeeze(0).reshape(-1, 300))
+    im = ax.imshow(alphas_arr.squeeze(0).reshape(-1, 150))
     plt.plot(alphas_arr.squeeze(0))
 
 
 if __name__ == "__main__":
-    task = Task.IJA
+    task = Task.RJA_LOW
     main(task)
 
     # model = CustomNet(
@@ -134,5 +135,3 @@ if __name__ == "__main__":
     # fig, ax = plt.subplots()
     # im = ax.imshow(alphas_arr.squeeze(0).reshape(-1, 150))
     # plt.plot(alphas_arr.squeeze(0))
-
-# %%

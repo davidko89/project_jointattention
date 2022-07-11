@@ -9,12 +9,11 @@ from pathlib import Path
 from tqdm import tqdm
 
 
-SPLIT_CSV_FILE = "ija_videofile_with_dx.csv" # "ija_videofile_with_dx.csv" or "rja_low_videofile_with_dx.csv" 
+SPLIT_CSV_FILE = "rja_low_videofile_with_dx.csv"
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 RAW_DATA_PATH = Path(DATA_PATH, "raw_data")
 PROC_DATA_PATH = Path(DATA_PATH, "proc_data")
-PROC_IJA_PATH = Path(DATA_PATH, "proc_data/proc_ija")
 PROC_RJA_LOW_PATH = Path(DATA_PATH, "proc_data/proc_rja_low")
 
 
@@ -25,6 +24,10 @@ def read_dataset(csv_file: str) -> pd.DataFrame:
 
 def get_video_path(task_name, file_name) -> Path:
     return Path(RAW_DATA_PATH, task_name, file_name)
+
+
+def get_npy_output_path(file_name) -> Path:
+    return Path(PROC_RJA_LOW_PATH, file_name)
 
 
 def read_video(video_path: Path):
@@ -67,7 +70,7 @@ def preproc_transform(video_arr):
     )
 
 
-def pad_frame(video_arr, target_length=300):
+def pad_frame(video_arr, target_length=150):
     length = video_arr.shape[0]
     if length >= target_length:
         new_video_arr = video_arr[:target_length]
@@ -89,52 +92,41 @@ def pad_along_axis(array, target_length, axis=0):
 
 
 def save_numpy_arr(arr: np.ndarray, file_name: str):
-    np.save(Path(PROC_IJA_PATH, file_name), arr) # PROC_RJA_LOW_PATH or PROC_IJA_PATH
+    np.save(get_npy_output_path(file_name), arr)
 
 
 def process_by_file(task_name, file_name):
+    output_file_name = f"{file_name.split('.')[0]}.npy"
+    if Path.exists(get_npy_output_path(output_file_name)):
+        return;
+
     target_path = get_video_path(task_name, file_name)
     video_arr = read_video(target_path)
     preproc_arr = preproc_transform(video_arr)
 
     # print(preproc_arr.shape)
-    save_numpy_arr(preproc_arr, f"{file_name.split('.')[0]}.npy")
+    save_numpy_arr(preproc_arr, output_file_name)
 
 
 #%%
 def main():
     data: pd.DataFrame = read_dataset(SPLIT_CSV_FILE).dropna()
-    task_name = "ija" # "rja_low" or "ija"
-    output_path = PROC_IJA_PATH # PROC_RJA_LOW_PATH or PROC_IJA_PATH
+    task_name = "rja_low" 
+    output_path = PROC_RJA_LOW_PATH
     output_files = [p.stem for p in output_path.glob("*.npy") if p]
     target_files = [f for f in data.file_name if f not in output_files]
 
     for idx, file_name in tqdm(enumerate(target_files)):
-        if idx == 5:
-            break
+        # if idx == 5:
+        #     break
         process_by_file(task_name, file_name)
-
-    # import concurrent.futures
-    # from sqlite3 import OperationalError
-    # output_path = Path("/home/cko4/project_jointattention/data/proc_data/proc_ija/")
-    # output_files = [p.stem for p in output_path.glob("*.npy") if p]
-
-    # target_files = [f for f in data.file_name if f not in output_files]
-
-    # with concurrent.futures.ProcessPoolExecutor(max_workers=30) as executor:
-    #     futures = [
-    #         executor.submit(process_by_file, task_name, file_name)
-    #         for file_name in target_files
-    #     ]
-    #     for done in concurrent.futures.as_completed(futures):
-    #         done.result()
 
 
 if __name__ == "__main__":
     main()
 
-    # for folder in PROC_DATA_PATH.glob("proc_ija"):
-    #     for file in folder.glob("B015_IJA_1.npy"):
+    # for folder in PROC_DATA_PATH.glob("proc_rja_low"):
+    #     for file in folder.glob("B015_RJA_low_1.npy"):
     #         arr = np.load(file)
     #         print(arr[150,].shape)
     #         plt.imshow(arr[150,].transpose(1, 2, 0))
