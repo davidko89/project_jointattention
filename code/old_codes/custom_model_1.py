@@ -1,4 +1,3 @@
-#%%
 import torch
 import torch.nn as nn
 from typing import Tuple
@@ -26,7 +25,7 @@ class CustomAttention(nn.Module):
         super().__init__()
         self.linear = nn.Linear(num_hiddens, num_hiddens)
         self.tanh = nn.Tanh()
-        self.softmax = nn.Softmax(dim=-1)
+        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, lstm_outputs):
         # lstm_outputs (seq_len, hidden)
@@ -84,7 +83,7 @@ if __name__ == "__main__":
     X = torch.rand(size=(1, 150, 512, 7, 7))
     # model1 = LRCN(input_size=25088, seq_len=150, num_hiddens=128, num_layers=2)
     # model2 = CustomMLP(num_hiddens=128, dropout=0.5)
-    # model3 = FusionSelfAttention(input_dimension=150)
+    # model3 = CustomAttention(input_dimension=150)
     model4 = CustomNet(
         input_size=25088,
         seq_len=150,
@@ -108,6 +107,4 @@ if __name__ == "__main__":
     # attention_embeddings = model3(X)
     Y, alpha = model4(X)
     print(Y.shape)  # Y: [1, 2]
-    print(alpha.shape)  # attention: [1, 150]
-
-# %%
+    print(alpha.shape)  # alpha: [1, 150, 128] although it should be [1, 150]

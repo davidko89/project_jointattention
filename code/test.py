@@ -1,4 +1,3 @@
-#%%
 from pathlib import Path
 from enum import Enum, auto
 import logging
@@ -10,10 +9,11 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
 )
+import numpy as np 
 import torch
 import matplotlib.pyplot as plt
 from data_loader import get_loader
-from custom_model_1 import CustomNet
+from custom_model import CustomNet
 
 
 class Task(Enum):
@@ -25,10 +25,10 @@ class Task(Enum):
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 CHECKPOINT_PATH = Path(
-    PROJECT_PATH, "checkpoint/lrcnatten1_rjalow_small_220708_weight_10.pt"
+    PROJECT_PATH, "checkpoint/lrcnatten_ija_220711_weight_10.pt"
 )  # specify which weight
 BATCH_SIZE = 1
-SEQ_LEN = 150  # 300 if IJA, 150 if RJA_high or RJA_low
+SEQ_LEN = 300  # 300 if IJA, 150 if RJA_high or RJA_low
 
 
 logger = logging.getLogger()
@@ -40,20 +40,22 @@ logger.addHandler(file_handler)
 
 
 def test_trained_network(model, test_loader, device):
+
+    model.eval()
+    
     # Initialize the prediction and label lists(tensors)
     predlist = torch.zeros(0, dtype=torch.long, device="cpu")
     lbllist = torch.zeros(0, dtype=torch.long, device="cpu")
-
-    model.eval()
+    alphas_arrs = []
 
     for batch_idx, (X, y) in enumerate(test_loader, 1):
         X = X.to(device)
         y = y.to(device)
-
         output, alphas_t = model(X)
         
         alphas_arr = alphas_t.detach().cpu().numpy()
-
+        alphas_arrs.extend(alphas_arr)
+        
         pred = torch.argmax(output, dim=1)
 
         # Append batch prediction results
@@ -79,10 +81,9 @@ def test_trained_network(model, test_loader, device):
     f1 = f1_score(lbllist.numpy(), predlist.numpy())
     logger.info(f"f1_score: {f1}")
 
-    return alphas_arr
+    return np.array(alphas_arrs), torch.LongTensor(lbllist).numpy() 
 
 
-#%%
 def main(task: Task):
     logger.info(f"{task.name}")
 
@@ -95,7 +96,7 @@ def main(task: Task):
         num_hiddens=128,
         num_layers=2,
         dropout=0.4,
-        # attention_dim=128,
+        attention_dim=128,
     )
 
     model.to(device)
@@ -103,19 +104,25 @@ def main(task: Task):
 
     _, _, test_loader = get_loader(task, BATCH_SIZE, DATA_PATH)
 
-    alphas_arr = test_trained_network(
+    alphas_arr, labels = test_trained_network(
         model,
         test_loader,
         device,  
     )
 
-    fig, ax = plt.subplots()
-    im = ax.imshow(alphas_arr.squeeze(0).reshape(-1, 150))
-    plt.plot(alphas_arr.squeeze(0))
+    asd_alphas_arr = alphas_arr[labels == 1].mean(0)
+    td_alphas_arr = alphas_arr[labels == 0].mean(0)
 
+    plt.plot(asd_alphas_arr, c = 'b', label = 'ASD')
+    plt.plot(td_alphas_arr, c = 'r', label = 'TD')
+    plt.legend()
+    plt.savefig('ija_tanh_attention_visualization.png')
+
+    # im = ax.imshow(alphas_arr.squeeze(0).reshape(-1, 150))
+    # plt.plot(alphas_arr.squeeze(0))
 
 if __name__ == "__main__":
-    task = Task.RJA_LOW
+    task = Task.IJA
     main(task)
 
     # model = CustomNet(

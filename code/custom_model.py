@@ -1,11 +1,10 @@
-#%%
 import torch
 import torch.nn as nn
 from typing import Tuple
 
 
 class LRCN(nn.Module):
-    def __init__(self, input_size, seq_len, num_hiddens, num_layers):
+    def __init__(self, input_size: int, seq_len: int, num_hiddens: int, num_layers: int) -> None:
         super().__init__()
         self.seq_len = seq_len
         self.num_hiddens = num_hiddens
@@ -15,10 +14,8 @@ class LRCN(nn.Module):
         )  # cnn_output->input_size=512*7*7
 
     def forward(self, X) -> Tuple[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
-        lstm_inputs = X.view(X.size(0), self.seq_len, -1)
-        lstm_outputs, hidden_states = self.lstm(lstm_inputs)
+        lstm_outputs, hidden_states = self.lstm(X)
         return lstm_outputs, hidden_states
-        # lstm_outputs:[batch_size, seq_len, num_hiddens]
 
 
 class CustomAttention(nn.Module):
@@ -52,10 +49,10 @@ class CustomMLP(nn.Module):
         self.relu = nn.ReLU()
         self.drop1 = nn.Dropout(dropout)
         self.linear2 = nn.Linear(num_hiddens, 2)
-        self.softmax = nn.Softmax(dim=-1)
+        # self.softmax = nn.Softmax(dim=-1)
 
         self.net = nn.Sequential(
-            self.linear1, self.relu, self.drop1, self.linear2, self.softmax
+            self.linear1, self.relu, self.drop1, self.linear2
         )
 
     def forward(self, X):
@@ -118,5 +115,3 @@ if __name__ == "__main__":
     out, alphas_t = model4(X)
     print(out.shape)  # out: [1, 2]
     print(alphas_t.shape)  # alphas_t: [1, 150]
-
-# %%

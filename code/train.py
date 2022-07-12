@@ -7,7 +7,7 @@ from earlystopping import EarlyStopping
 from pathlib import Path
 from enum import Enum, auto
 from data_loader import get_loader
-from custom_model_1 import CustomNet
+from custom_model import CustomNet
 
 
 class Task(Enum):
@@ -152,8 +152,8 @@ def main(task: Task):
         seq_len=SEQ_LEN,
         num_hiddens=128,
         num_layers=2,
-        dropout=0.4,
-        # attention_dim=128,
+        dropout=0.5,
+        attention_dim=128,
     )
     
     model.to(device)
@@ -181,5 +181,5 @@ def main(task: Task):
 
 
 if __name__ == "__main__":
-    task = Task.RJA_HIGH # IJA, RJA_HIGH, RJA_LOW
+    task = Task.RJA_LOW
     main(task)
