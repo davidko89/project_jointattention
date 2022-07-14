@@ -19,8 +19,8 @@ class Task(Enum):
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 CHECKPOINT_PATH = Path(PROJECT_PATH, "checkpoint")
-BATCH_SIZE = 16
-SEQ_LEN = 150  # 300 if IJA, 150 if RJA_high & RJA_low
+BATCH_SIZE = 10
+SEQ_LEN = 300  # 300 if IJA, 150 if RJA_high & RJA_low
 N_EPOCHS = 10
 PATIENCE = 7
 
@@ -150,10 +150,10 @@ def main(task: Task):
     model = CustomNet(
         input_size=25088,
         seq_len=SEQ_LEN,
-        num_hiddens=128,
+        num_hiddens=512,
         num_layers=2,
         dropout=0.5,
-        attention_dim=128,
+        attention_dim=SEQ_LEN,
     )
     
     model.to(device)
@@ -181,5 +181,5 @@ def main(task: Task):
 
 
 if __name__ == "__main__":
-    task = Task.RJA_LOW
+    task = Task.IJA
     main(task)

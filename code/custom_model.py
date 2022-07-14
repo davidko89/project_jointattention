@@ -14,7 +14,8 @@ class LRCN(nn.Module):
         )  # cnn_output->input_size=512*7*7
 
     def forward(self, X) -> Tuple[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
-        lstm_outputs, hidden_states = self.lstm(X)
+        lstm_inputs = X.view(X.size(0), self.seq_len, -1)
+        lstm_outputs, hidden_states = self.lstm(lstm_inputs)
         return lstm_outputs, hidden_states
 
 

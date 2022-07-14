@@ -9,12 +9,13 @@ from pathlib import Path
 from tqdm import tqdm
 
 
-SPLIT_CSV_FILE = "ija_videofile_with_dx.csv"
+SPLIT_CSV_FILE = "ija_videofile_with_dx_bgr.csv"
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
-RAW_DATA_PATH = Path(DATA_PATH, "raw_data")
+RAW_DATA_PATH = Path(DATA_PATH, "raw_data_bgr")
 PROC_DATA_PATH = Path(DATA_PATH, "proc_data")
 PROC_IJA_PATH = Path(DATA_PATH, "proc_data/proc_ija")
+FIG_PATH = Path(PROJECT_PATH, "figures")
 
 
 def read_dataset(csv_file: str) -> pd.DataFrame:
@@ -54,7 +55,7 @@ def preproc_transform(video_arr):
     preprocess = transforms.Compose(
         [
             transforms.ToTensor(),
-            transforms.Grayscale(3),
+            # transforms.Grayscale(3),
             transforms.Resize(224),
             transforms.CenterCrop(224),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
@@ -92,7 +93,7 @@ def pad_along_axis(array, target_length, axis=0):
 
 
 def save_numpy_arr(arr: np.ndarray, file_name: str):
-    np.save(get_npy_output_path(file_name), arr) # PROC_RJA_LOW_PATH or PROC_IJA_PATH
+    np.save(get_npy_output_path(file_name), arr)
 
 
 def process_by_file(task_name, file_name):
@@ -126,8 +127,13 @@ if __name__ == "__main__":
     main()
 
     # for folder in PROC_DATA_PATH.glob("proc_ija"):
-    #     for file in folder.glob("B015_IJA_1.npy"):
+    #     for file in folder.glob("B014_IJA_1.npy"):
     #         arr = np.load(file)
     #         print(arr[150,].shape)
     #         plt.imshow(arr[150,].transpose(1, 2, 0))
+    #         plt.savefig(Path(FIG_PATH, f'sample_ija_videoimage.png'))
     #         break
+              
+    # for idx, file_name in tqdm(enumerate(target_files)):
+    #     if idx == 930:
+    #         process_by_file(task_name, file_name)

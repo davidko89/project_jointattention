@@ -3,15 +3,25 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import transforms
 import numpy as np
 import pandas as pd
+from enum import Enum, auto
 from pathlib import Path
+
+class Task(Enum):
+    IJA = auto()
+    RJA_LOW = auto()
+    RJA_HIGH = auto()
+
+
+PROJECT_PATH = Path(__file__).parents[1]
+DATA_PATH = Path(PROJECT_PATH, "data")
 
 
 def get_split_csv_file_name(task, data_path):
-    return Path(data_path, f"{task.name.lower()}_diagnosis_sets.csv")
+    return Path(data_path, f"{task.name.lower()}_diagnosis_sets_bgr.csv")
 
 
 def get_cnn_path(task, data_path):
-    return Path(data_path, f"proc_data/cnn_{task.name.lower()}")
+    return Path(data_path, f"proc_data/cnn_{task.name.lower()}_bgr")
 
 
 class VideoDataset(Dataset):
@@ -69,7 +79,8 @@ def get_loader(task, batch_size, data_path):
 
 
 if __name__ == "__main__":
-    train_loader, _, _ = get_loader(batch_size=16)
+    task = Task.IJA
+    train_loader, _, _ = get_loader(task, 4, DATA_PATH)
 
     num_TD = 0
     num_ASD = 0

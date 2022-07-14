@@ -10,7 +10,7 @@ from custom_model import CustomNet
 PROJECT_PATH = Path(__file__).parents[1]
 FIG_PATH = Path(PROJECT_PATH, "figures")
 
-N_EPOCHS = 1000
+N_EPOCHS = 500
 BATCH_SIZE = 1000
 SEQ_LEN = 10
 FEATURE_LEN = 5
@@ -144,11 +144,11 @@ def main():
     true_alphas_arr = alphas_arr[labels == 1].mean(0)
     false_alphas_arr = alphas_arr[labels == 0].mean(0)
     
-    plt.plot(true_alphas_arr, c = 'b', label = 'True')
-    plt.plot(false_alphas_arr, c = 'r', label = 'False')
+    plt.plot(true_alphas_arr, c = 'b', label = '1, 1')
+    plt.plot(false_alphas_arr, c = 'r', label = '1, 0')
     plt.legend()
 
-    plt.savefig(Path(FIG_PATH, f'Sample_Attention.png'))
+    plt.savefig(Path(FIG_PATH, f'sample_attention.png'))
 
 
 if __name__ == "__main__":

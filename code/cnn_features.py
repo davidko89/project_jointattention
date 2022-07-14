@@ -13,11 +13,12 @@ PROC_IJA_PATH = Path(DATA_PATH, "proc_data/proc_ija")
 PROC_RJA_LOW_PATH = Path(DATA_PATH, "proc_data/proc_rja_low")
 PROC_RJA_HIGH_PATH = Path(DATA_PATH, "proc_data/proc_rja_high")
 CNN_IJA_PATH = Path(DATA_PATH, "proc_data/cnn_ija")
+CNN_IJA_BGR_PATH = Path(DATA_PATH, "proc_data/cnn_ija_bgr")
 CNN_RJA_LOW_PATH = Path(DATA_PATH, "proc_data/cnn_rja_low")
 CNN_RJA_HIGH_PATH = Path(DATA_PATH, "proc_data/cnn_rja_high")
 
 
-SEQ_LEN = 150  # 150 if RJA_high, 300 if IJA or RJA_low
+SEQ_LEN = 300  # 150 if RJA_high, 300 if IJA or RJA_low
 
 
 class CNN(nn.Module):
@@ -46,9 +47,9 @@ def main():
     # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
-    for file in tqdm(PROC_RJA_LOW_PATH.iterdir()):
+    for file in tqdm(PROC_IJA_PATH.iterdir()):
         file_name = str.split(file.as_posix(), "/")[-1]
-        output_file_path = Path(CNN_RJA_LOW_PATH, file_name)
+        output_file_path = Path(CNN_IJA_BGR_PATH, file_name)
         if Path.exists(output_file_path):
             continue
 

@@ -1408,3 +1408,52 @@ RJA_high
 2022-07-11 16:29:54,872|INFO|roc_auc_score: 1.0
 2022-07-11 16:29:54,873|INFO|f1_score: 1.0
 2022-07-11 16:48:48,794|INFO|IJA
+2022-07-12 10:47:09,160|INFO|IJA
+2022-07-12 10:47:49,866|INFO|confusion_matrix: 
+[[96  0]
+ [ 0 74]]
+2022-07-12 10:47:49,874|INFO|accuracy_score: 1.0
+2022-07-12 10:47:49,889|INFO|precision_score: 1.0
+2022-07-12 10:47:49,890|INFO|recall_score: 1.0
+2022-07-12 10:47:49,897|INFO|roc_auc_score: 1.0
+2022-07-12 10:47:49,898|INFO|f1_score: 1.0
+
+2022-07-12 11:07:08,728|INFO|RJA_HIGH
+2022-07-12 11:07:35,141|INFO|confusion_matrix: 
+[[41  0]
+ [ 0 59]]
+2022-07-12 11:07:35,142|INFO|accuracy_score: 1.0
+2022-07-12 11:07:35,145|INFO|precision_score: 1.0
+2022-07-12 11:07:35,146|INFO|recall_score: 1.0
+2022-07-12 11:07:35,149|INFO|roc_auc_score: 1.0
+2022-07-12 11:07:35,150|INFO|f1_score: 1.0
+
+2022-07-12 11:16:52,021|INFO|RJA_LOW
+2022-07-12 11:17:06,083|INFO|confusion_matrix: 
+[[51  0]
+ [ 0 84]]
+2022-07-12 11:17:06,084|INFO|accuracy_score: 1.0
+2022-07-12 11:17:06,085|INFO|precision_score: 1.0
+2022-07-12 11:17:06,086|INFO|recall_score: 1.0
+2022-07-12 11:17:06,087|INFO|roc_auc_score: 1.0
+2022-07-12 11:17:06,088|INFO|f1_score: 1.0
+
+2022-07-12 12:55:03,819|INFO|IJA
+2022-07-12 12:55:23,434|INFO|confusion_matrix: 
+[[96  0]
+ [ 0 74]]
+2022-07-12 12:55:23,434|INFO|accuracy_score: 1.0
+2022-07-12 12:55:23,435|INFO|precision_score: 1.0
+2022-07-12 12:55:23,436|INFO|recall_score: 1.0
+2022-07-12 12:55:23,438|INFO|roc_auc_score: 1.0
+2022-07-12 12:55:23,439|INFO|f1_score: 1.0
+
+2022-07-14 09:45:05,847|INFO|IJA
+2022-07-14 09:45:13,847|INFO|confusion_matrix: 
+[[41  0]
+ [ 0 16]]
+2022-07-14 09:45:13,847|INFO|accuracy_score: 1.0
+2022-07-14 09:45:13,849|INFO|precision_score: 1.0
+2022-07-14 09:45:13,850|INFO|recall_score: 1.0
+2022-07-14 09:45:13,851|INFO|roc_auc_score: 1.0
+2022-07-14 09:45:13,852|INFO|f1_score: 1.0

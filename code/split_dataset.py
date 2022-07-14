@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.model_selection import StratifiedShuffleSplit, train_test_split
 
 
-SPLIT_CSV_FILE = "rja_high_videofile_with_dx.csv"
+SPLIT_CSV_FILE = "ija_videofile_with_dx_bgr.csv"
 PROJECT_PATH = Path(__file__).parents[1]
 DATA_PATH = Path(PROJECT_PATH, "data")
 
@@ -57,6 +57,5 @@ print(dataset)
 
 
 #%%
-dataset.to_csv(Path(DATA_PATH, "rja_high_diagnosis_sets.csv"), index=False)
-
+dataset.to_csv(Path(DATA_PATH, "ija_diagnosis_sets.csv"), index=False)
 # %%

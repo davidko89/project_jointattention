@@ -4,7 +4,7 @@ from typing import Tuple
 
 
 class LRCN(nn.Module):
-    def __init__(self, input_size, seq_len, num_hiddens, num_layers):
+    def __init__(self, input_size: int, seq_len: int, num_hiddens: int, num_layers: int) -> None:
         super().__init__()
         self.seq_len = seq_len
         self.num_hiddens = num_hiddens
@@ -41,10 +41,9 @@ class CustomMLP(nn.Module):
         self.relu = nn.ReLU()
         self.drop1 = nn.Dropout(dropout)
         self.linear2 = nn.Linear(seq_len, 2)
-        self.softmax = nn.Softmax(dim=-1)
 
         self.net = nn.Sequential(
-            self.linear1, self.relu, self.drop1, self.linear2, self.softmax
+            self.linear1, self.relu, self.drop1, self.linear2,
         )
 
     def forward(self, X):
